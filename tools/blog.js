@@ -62,8 +62,8 @@ const hljs = global.hljs;
 const PAGES = [
   { name: 'index.html',   pageId: 'home',    path: '',              title: 'PHANTOM 怪盗日志 · TAKE YOUR HEART',
     desc: 'CTF 复盘、渗透测试笔记、靶场搭建、逆向与二进制分析。一个把每次「搞通了」都留下来的地方。' },
-  { name: 'archive.html', pageId: 'archive', path: 'archive.html', title: '归档 | PHANTOM 怪盗日志',
-    desc: '按年份整理的全部文章列表。' },
+  { name: 'archive.html', pageId: 'archive', path: 'archive.html', title: '学习日志 | PHANTOM 怪盗日志',
+    desc: '按年份整理的全部文章。' },
   { name: 'tags.html',    pageId: 'tags',    path: 'tags.html',    title: '标签 | PHANTOM 怪盗日志',
     desc: '全部标签与分类索引。' },
   { name: 'about.html',   pageId: 'about',   path: 'about.html',   title: '关于 | PHANTOM 怪盗日志',
@@ -419,7 +419,7 @@ function renderPost(post, all) {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: '首页', item: SITE.url },
-          { '@type': 'ListItem', position: 2, name: '归档', item: absUrl('archive.html') },
+          { '@type': 'ListItem', position: 2, name: '学习日志', item: absUrl('archive.html') },
           { '@type': 'ListItem', position: 3, name: post.title, item: canonical }
         ]
       }

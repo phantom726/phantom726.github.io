@@ -586,7 +586,7 @@
       { kind: 'CMD', title: '回到顶部', kw: 'top scroll 顶部 回到', run: function () { window.scrollTo({ top: 0, behavior: noMotion() ? 'auto' : 'smooth' }); } },
       { kind: 'CMD', title: '复制当前页链接', kw: 'copy link url 复制 链接 分享', run: function () { copyText(location.href, '已复制链接'); } },
       { kind: 'CMD', title: '打开 RSS 订阅', kw: 'rss feed 订阅', run: function () { location.href = ROOT + 'feed.xml'; } },
-      { kind: 'CMD', title: '前往：归档', kw: 'archive go 归档', run: function () { location.href = ROOT + 'archive.html'; } },
+      { kind: 'CMD', title: '前往：学习日志', kw: 'archive logbook go 归档 日志', run: function () { location.href = ROOT + 'archive.html'; } },
       { kind: 'CMD', title: '前往：标签', kw: 'tags go 标签', run: function () { location.href = ROOT + 'tags.html'; } },
       { kind: 'CMD', title: '前往：关于', kw: 'about go 关于', run: function () { location.href = ROOT + 'about.html'; } },
       { kind: 'CMD', title: '前往：首页', kw: 'home go 首页', run: function () { location.href = ROOT + 'index.html'; } }

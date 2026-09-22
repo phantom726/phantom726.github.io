@@ -56,10 +56,10 @@ node tools/blog.js
 | 输出 | 内容 |
 | --- | --- |
 | `posts/你的文章.html` | 文章页面（目录、锚点、相关阅读都在构建期算好） |
-| `assets/js/posts-data.js` | 全站文章索引（首页、归档、标签页、搜索都靠它） |
+| `assets/js/posts-data.js` | 全站文章索引（首页、学习日志、标签页、搜索都靠它） |
 | `feed.xml` / `feed.json` | RSS 全文 + JSON Feed 1.1 |
 | `sitemap.xml` / `robots.txt` | 站点地图 |
-| 根目录 5 个 `.html` | 首页 / 归档 / 标签 / 关于 / 404 |
+| 根目录 5 个 `.html` | 首页 / 学习日志 / 标签 / 关于 / 404 |
 
 ### 3. 自检
 
@@ -129,7 +129,7 @@ nmap -sV -p- 10.10.10.10
 文章页在 `posts/` 下面一层，写 `../index.html` 很烦，所以直接写 `/index.html`，构建时会自动补成 `../index.html`。
 
 ```markdown
-看 [归档](/archive.html)，或者回到 [首页](/index.html)。
+看 [学习日志](/archive.html)，或者回到 [首页](/index.html)。
 ```
 
 ---
@@ -247,7 +247,7 @@ GitHub 已禁用密码认证，HTTPS 方式必须用 PAT（Scope 勾 `repo`）�
 ```
 phantom.github.io/
 ├── index.html                ← 首页        ┐
-├── archive.html              ← 归档        │ 都是构建产物，
+├── archive.html              ← 学习日志    │ 都是构建产物，
 ├── tags.html                 ← 标签        │ 不要直接改！
 ├── about.html                ← 关于        │ 改下面的模板
 ├── 404.html                  ← 404 页面    ┘
@@ -281,7 +281,7 @@ phantom.github.io/
     ├── post.tpl.html         ← 文章页骨架
     └── pages/                ← 各页面的内容片段
         ├── index.html        ← 首页内容
-        ├── archive.html      ← 归档页内容
+        ├── archive.html      ← 学习日志页内容
         ├── tags.html         ← 标签页内容
         ├── about.html        ← 关于页内容
         └── 404.html          ← 404 页内容

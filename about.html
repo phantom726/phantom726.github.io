@@ -96,7 +96,7 @@
   </a>
   <nav class="nav__menu" id="navMenu" aria-label="主导航">
     <a href="index.html">首页<span>HOME</span></a>
-    <a href="archive.html">归档<span>ARCHIVE</span></a>
+    <a href="archive.html">学习日志<span>LOGBOOK</span></a>
     <a href="tags.html">标签<span>TAGS</span></a>
     <a href="about.html">关于<span>ABOUT</span></a>
   </nav>
@@ -139,7 +139,6 @@
         建这个站的目的很单纯：<em>把每次「搞通了」的瞬间留下来</em>。
         踩过的坑、绕过的弯、最后想明白的那句话，不写下来过两个月就全忘了。
       </p>
-
       <h2>这里写什么</h2>
       <ul>
         <li><strong>CTF 复盘</strong>：赛题思路、卡点、赛后补的解法，不美化过程。</li>
@@ -163,17 +162,16 @@
       <h2>技术上的事</h2>
       <p>
         整站是纯静态的，跑在 GitHub Pages 上。生成器是自写的
-        <code>tools/blog.js</code>（零依赖 Node 脚本），样式是手写的
-        <code>p5r.css</code>，交互是原生 JS，没有用任何框架。
-        Markdown 解析和代码高亮都用了本地化的库，整站零外部请求。
+        <code>tools/blog.js</code>，零依赖的 Node 脚本；样式手写在
+        <code>p5r.css</code> 里；交互是原生 JS，没有用框架。
+        Markdown 解析和代码高亮用的是本地化的库，整站零外部请求。
       </p>
       <p>
-        顺手把浏览器能给的能力都用上了：页面切换走原生
-        <strong>View Transitions</strong>（那道斜向擦除是 CSS 动画，不是 JS 假装的），
-        链接<strong>悬停即预取</strong>，搜索面板是原生 <code>&lt;dialog&gt;</code>，
-        阅读设置是原生 <strong>Popover</strong>，进度条用<strong>滚动驱动动画</strong>，
+        能用浏览器原生能力的地方就没用 JS 去模拟：转场是
+        <strong>View Transitions</strong>，搜索面板用 <code>&lt;dialog&gt;</code>，
+        阅读设置用 <strong>Popover</strong>，进度条走滚动驱动动画，
         主题色用 <code>light-dark()</code> 一套变量管两种模式。
-        每一项都写了降级路径——老浏览器只是少一点动效，不会坏。
+        每一项都留了降级路径，老浏览器只是少一点动效，不会坏。
       </p>
       <p>
         界面照着《Persona 5 Royal》做的：红黑白三色、斜切色块、粗斜体标题、
@@ -249,7 +247,7 @@
     <div class="foot__big">PHANTOM<br>THIEF LOG</div>
     <div class="foot__links">
       <a href="index.html">首页</a>
-      <a href="archive.html">归档</a>
+      <a href="archive.html">学习日志</a>
       <a href="tags.html">标签</a>
       <a href="about.html">关于</a>
       <a href="feed.xml">RSS</a>
