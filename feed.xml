@@ -2,15 +2,15 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 <channel>
   <title>PHANTOM 怪盗日志</title>
-  <link>https://phantom726.github.io/</link>
+  <link>https://phantom726.github.io/phantom.github.io/</link>
   <description>CTF / 渗透测试 / 靶场搭建 / 逆向 技术笔记</description>
   <language>zh-CN</language>
-  <lastBuildDate>Tue, 22 Sep 2026 12:52:12 GMT</lastBuildDate>
-  <atom:link href="https://phantom726.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+  <lastBuildDate>Tue, 22 Sep 2026 13:40:14 GMT</lastBuildDate>
+  <atom:link href="https://phantom726.github.io/phantom.github.io/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
       <title>这套 P5R 风格的博客是怎么搭的</title>
-      <link>https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html</link>
-      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html</guid>
+      <link>https://phantom726.github.io/phantom.github.io/posts/2026-09-22-p5r-design-notes.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/phantom.github.io/posts/2026-09-22-p5r-design-notes.html</guid>
       <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
       <category>折腾记录</category>
       <category>前端</category>
@@ -22,8 +22,8 @@
     </item>
     <item>
       <title>发一篇新文章只要三步</title>
-      <link>https://phantom726.github.io/posts/2026-09-21-how-to-write.html</link>
-      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-21-how-to-write.html</guid>
+      <link>https://phantom726.github.io/phantom.github.io/posts/2026-09-21-how-to-write.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/phantom.github.io/posts/2026-09-21-how-to-write.html</guid>
       <pubDate>Mon, 21 Sep 2026 00:00:00 GMT</pubDate>
       <category>随笔</category>
       <category>站务</category>
@@ -34,8 +34,8 @@
     </item>
     <item>
       <title>站内排版速查：把每种元素摆一遍</title>
-      <link>https://phantom726.github.io/posts/2026-09-20-markdown-cheatsheet.html</link>
-      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-20-markdown-cheatsheet.html</guid>
+      <link>https://phantom726.github.io/phantom.github.io/posts/2026-09-20-markdown-cheatsheet.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/phantom.github.io/posts/2026-09-20-markdown-cheatsheet.html</guid>
       <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
       <atom:updated>2026-09-22T00:00:00.000Z</atom:updated>
       <category>随笔</category>
@@ -47,8 +47,8 @@
     </item>
     <item>
       <title>赛后复盘：把一场比赛变成能用的东西</title>
-      <link>https://phantom726.github.io/posts/2026-09-19-ctf-postmortem.html</link>
-      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-19-ctf-postmortem.html</guid>
+      <link>https://phantom726.github.io/phantom.github.io/posts/2026-09-19-ctf-postmortem.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/phantom.github.io/posts/2026-09-19-ctf-postmortem.html</guid>
       <pubDate>Sat, 19 Sep 2026 00:00:00 GMT</pubDate>
       <atom:updated>2026-09-22T00:00:00.000Z</atom:updated>
       <category>CTF</category>
@@ -61,8 +61,8 @@
     </item>
     <item>
       <title>Web 测试的第一步：信息收集的固定顺序</title>
-      <link>https://phantom726.github.io/posts/2026-09-17-web-recon-order.html</link>
-      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-17-web-recon-order.html</guid>
+      <link>https://phantom726.github.io/phantom.github.io/posts/2026-09-17-web-recon-order.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/phantom.github.io/posts/2026-09-17-web-recon-order.html</guid>
       <pubDate>Thu, 17 Sep 2026 00:00:00 GMT</pubDate>
       <category>渗透测试</category>
       <category>信息收集</category>
@@ -74,8 +74,8 @@
     </item>
     <item>
       <title>把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑</title>
-      <link>https://phantom726.github.io/posts/2026-06-01-lab-setup.html</link>
-      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-06-01-lab-setup.html</guid>
+      <link>https://phantom726.github.io/phantom.github.io/posts/2026-06-01-lab-setup.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/phantom.github.io/posts/2026-06-01-lab-setup.html</guid>
       <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
       <category>靶场搭建</category>
       <category>靶场</category>

@@ -4,8 +4,18 @@
 
 **零构建依赖、零外部请求**——Markdown 解析器和代码高亮都是本地副本，整站在国内网络下打开速度稳定。
 
-- 线上地址（部署后）：https://phantom726.github.io/
+- **线上地址**：https://phantom726.github.io/phantom.github.io/
 - 生成方式：自写的 `tools/blog.js`（纯 Node，无需 npm install）
+
+> ⚠️ **关于这个网址多出来的一层路径**
+>
+> 用户主页仓库必须叫 **`<用户名>.github.io`**。你的 GitHub 用户名是 `phantom726`，
+> 但仓库名是 `phantom.github.io`（少了 `726`）——两个名字对不上，所以它被当成**项目站点**，
+> 网址就是 `https://phantom726.github.io/phantom.github.io/`。
+>
+> 想要干净的 `https://phantom726.github.io/`，把仓库改名成 `phantom726.github.io` 即可
+> （Settings → General → Repository name → Rename），改名后 GitHub 会自动把老地址重定向过去。
+> 改完记得把 `tools/blog.js` 里的 `BASE` 改成 `'/'` 再重新构建，并更新本地 remote。详见第四节。
 
 ---
 
@@ -126,7 +136,9 @@ nmap -sV -p- 10.10.10.10
 
 ## 四、部署
 
-> **本项目已经推过一次了**（2026-09-22，commit `16d976d`）。下面留着给以后换机器或重建时用。
+> **已上线**（2026-09-22）：推送到 `phantom726/phantom.github.io`，Pages 已开启，
+> `pages build and deployment` 构建成功 ⇒ 站点在
+> **https://phantom726.github.io/phantom.github.io/**
 
 ### 已经配好的状态
 
@@ -136,9 +148,37 @@ nmap -sV -p- 10.10.10.10
 | 分支 | `main` |
 | 身份 | 已全局配置（`phantom` / `3226607284@qq.com`） |
 | 认证方式 | **SSH key**（`~/.ssh/id_ed25519`，已登记到 GitHub） |
+| Pages | Source = `Deploy from a branch`，`main` / `/ (root)` |
 
 **用 SSH 不是随便选的**：这台机器直连 `github.com:443` 不通（要走本机 `127.0.0.1:10808` 的 SOCKS5 代理），
 但 **22 端口直连是通的**，且 SSH key 早就配好并登记过了 ⇒ **走 SSH 推送完全不需要代理、不需要 token**。
+
+### ⚠️ 把网址变成干净的根域名（推荐做一次）
+
+现在的网址是 `https://phantom726.github.io/phantom.github.io/`，多一层是因为
+**仓库名（`phantom.github.io`）和用户名（`phantom726`）对不上**。
+
+想改成 `https://phantom726.github.io/`，只需把仓库改名：
+
+1. 打开 https://github.com/phantom726/phantom.github.io/settings
+2. **Repository name** 改成 `phantom726.github.io` → **Rename**
+3. GitHub 会自动把老地址 301 重定向到新地址，不会产生死链
+
+然后本地要跟着改两处：
+
+```bash
+# ① 远程地址跟着改
+git remote set-url origin git@github.com:phantom726/phantom726.github.io.git
+git remote -v                       # 确认变了
+
+# ② 把 tools/blog.js 里的 BASE 改成 '/'
+#    const BASE = '/phantom.github.io/';   →   const BASE = '/';
+node tools/blog.js && node tools/check.js
+git add -A && git commit -m "chore: 仓库改名，站点基路径改为根目录" && git push
+```
+
+**只改仓库名不改 `BASE`** 的话，站点本身照样能打开（站内链接都是相对路径），
+但 canonical / og:image / RSS 里的绝对地址会指错，分享出去预览图会挂——所以两处要一起改。
 
 ### 首次部署的完整流程（重建时参考）
 
@@ -155,6 +195,9 @@ git push -u origin main
 ```
 
 **预期输出**：最后是 `branch 'main' set up to track 'origin/main'.` 和 `* [new branch] main -> main`。
+
+开启 Pages：仓库 **Settings → Pages** → Source 选 **`Deploy from a branch`**（⚠️ 千万别选 `GitHub Actions`，
+本站没有 workflow，选了会一直 404）→ Branch 选 `main` / `/ (root)` → **Save**。
 
 ### 日常更新
 
@@ -173,7 +216,7 @@ git ls-remote origin main   # 远端 main 的 hash
 git rev-parse main          # 本地 main 的 hash
 ```
 
-两个 hash 一样 = 推成功了。
+两个 hash 一样 = 推成功了。**push 完还要等 1~2 分钟** Pages 重新构建。
 
 ### 开启 GitHub Pages（只需一次）
 

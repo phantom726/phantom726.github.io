@@ -23,9 +23,21 @@ const SHELL = path.join(__dirname, 'shell.tpl.html');
 const PAGES_DIR = path.join(__dirname, 'pages');
 const VENDOR = path.join(ROOT, 'assets/vendor');
 
-/* 站点常量（换域名只改这里） */
+/* 站点常量（换域名 / 换仓库名只改这里） ------------------------------------
+   origin : 域名，不含路径
+   base   : 站点部署在域名下的哪一层
+            · 用户主页仓库（仓库名 = <用户名>.github.io）→ '/'
+            · 项目仓库（网址带一层 /<仓库名>/）        → '/<仓库名>/'
+            当前仓库叫 phantom.github.io 而用户名是 phantom726，
+            两个名字对不上 ⇒ 被当成项目站点，所以 base 是 '/phantom.github.io/'。
+            若把仓库改名为 phantom726.github.io，把 base 改成 '/' 即可。      */
+const ORIGIN = 'https://phantom726.github.io';
+const BASE = '/phantom.github.io/';
+
 const SITE = {
-  url: 'https://phantom726.github.io/',
+  url: ORIGIN + BASE,
+  origin: ORIGIN,
+  base: BASE,
   name: 'PHANTOM 怪盗日志',
   author: 'Phantom',
   lang: 'zh-CN',
