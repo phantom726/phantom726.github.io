@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <clipPath id="f"><rect width="64" height="64"/></clipPath>
+  </defs>
+  <g clip-path="url(#f)">
+    <rect width="64" height="64" fill="#0B0B0D"/>
+    <g transform="skewX(-13)">
+      <rect x="-14" y="-10" width="16" height="90" fill="#E60012"/>
+      <rect x="8" y="-10" width="9" height="90" fill="#E60012" opacity="0.6"/>
+      <rect x="40" y="-10" width="14" height="90" fill="#9E000C"/>
+    </g>
+    <g transform="translate(32 32) skewX(-10) scale(0.30) translate(-100 -100)">
+      <path fill="#0B0B0D" fill-rule="evenodd" transform="translate(11 11)"
+        d="M62 40 H110 C136 40 152 55 152 76 C152 97 136 112 110 112 H90 V164 H62 Z
+           M90 64 V88 H106 C116 88 122 83 122 76 C122 69 116 64 106 64 Z"/>
+      <path fill="#FFFFFF" fill-rule="evenodd"
+        d="M62 40 H110 C136 40 152 55 152 76 C152 97 136 112 110 112 H90 V164 H62 Z
+           M90 64 V88 H106 C116 88 122 83 122 76 C122 69 116 64 106 64 Z"/>
+    </g>
+  </g>
+</svg>

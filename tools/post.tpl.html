@@ -1,0 +1,33 @@
+  <!-- 文章页骨架。外壳（导航 / 页脚 / 面板 / 脚本）在 tools/shell.tpl.html -->
+  <article class="post" data-read="{{STYLE}}">
+    <header class="post-hero">
+      <div class="wrap post-hero__inner">
+        <nav class="crumb" aria-label="面包屑">
+          <a href="{{ROOT}}index.html">首页</a><i>/</i>
+          <a href="{{ROOT}}archive.html">归档</a><i>/</i>
+          <span>{{CATEGORY}}</span>
+        </nav>
+        <h1 class="post-title">{{TITLE}}</h1>
+        <div class="post-meta">
+          <time datetime="{{DATE}}">DATE&nbsp;<b>{{DATE}}</b></time>
+          {{UPDATED}}
+          <span>{{WORDS}} 字 · 约 {{READING}} 分钟读完</span>
+          <span>FILE&nbsp;<b>{{SLUG}}.md</b></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap post-body">
+      <div class="prose">{{CONTENT}}</div>
+      {{TOC_BLOCK}}
+    </div>
+  </article>
+
+  <div class="wrap">
+    <div class="post-foot">
+      <div class="post-foot__tags">{{TAGS}}</div>
+      <nav class="pager" aria-label="上下篇">{{PAGER}}</nav>
+    </div>
+  </div>
+
+  {{RELATED}}

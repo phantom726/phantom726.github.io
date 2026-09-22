@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<channel>
+  <title>PHANTOM 怪盗日志</title>
+  <link>https://phantom726.github.io/</link>
+  <description>CTF / 渗透测试 / 靶场搭建 / 逆向 技术笔记</description>
+  <language>zh-CN</language>
+  <lastBuildDate>Tue, 22 Sep 2026 12:52:12 GMT</lastBuildDate>
+  <atom:link href="https://phantom726.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>这套 P5R 风格的博客是怎么搭的</title>
+      <link>https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html</guid>
+      <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
+      <category>折腾记录</category>
+      <category>前端</category>
+      <category>CSS</category>
+      <category>设计</category>
+      <category>本站</category>
+      <description>红黑白三色、斜切色块、撕纸边、粗斜体——把《Persona 5 Royal》的 UI 语言拆成可以复用的 CSS 变量和类，再拼成一个零依赖的静态博客。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>发一篇新文章只要三步</title>
+      <link>https://phantom726.github.io/posts/2026-09-21-how-to-write.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-21-how-to-write.html</guid>
+      <pubDate>Mon, 21 Sep 2026 00:00:00 GMT</pubDate>
+      <category>随笔</category>
+      <category>站务</category>
+      <category>教程</category>
+      <category>工具</category>
+      <description>记一下本站的写作流程。不用装任何东西，一个命令建草稿，一个命令构建，一条 git 推送，GitHub Pages 就自动更新了。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>站内排版速查：把每种元素摆一遍</title>
+      <link>https://phantom726.github.io/posts/2026-09-20-markdown-cheatsheet.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-20-markdown-cheatsheet.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <atom:updated>2026-09-22T00:00:00.000Z</atom:updated>
+      <category>随笔</category>
+      <category>Markdown</category>
+      <category>站务</category>
+      <category>排版</category>
+      <description>这篇是本站的排版说明书——把支持的元素全摆一遍，顺便记下哪些写法更好用。写新文章之前扫一眼，比到处翻语法文档快。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>赛后复盘：把一场比赛变成能用的东西</title>
+      <link>https://phantom726.github.io/posts/2026-09-19-ctf-postmortem.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-19-ctf-postmortem.html</guid>
+      <pubDate>Sat, 19 Sep 2026 00:00:00 GMT</pubDate>
+      <atom:updated>2026-09-22T00:00:00.000Z</atom:updated>
+      <category>CTF</category>
+      <category>CTF</category>
+      <category>复盘</category>
+      <category>方法论</category>
+      <category>模板</category>
+      <description>打完一场比赛就关掉电脑，是最亏的做法。复盘不是写作文，是把「当时为什么卡住」翻译成下次能直接用的东西——这里是我的固定流程。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>Web 测试的第一步：信息收集的固定顺序</title>
+      <link>https://phantom726.github.io/posts/2026-09-17-web-recon-order.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-17-web-recon-order.html</guid>
+      <pubDate>Thu, 17 Sep 2026 00:00:00 GMT</pubDate>
+      <category>渗透测试</category>
+      <category>信息收集</category>
+      <category>方法论</category>
+      <category>清单</category>
+      <category>nmap</category>
+      <description>拿到一个授权目标，别急着丢 payload。按固定顺序过一遍信息收集，后面能省掉一半的返工——顺序错了，你会一直在补前面漏掉的东西。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑</title>
+      <link>https://phantom726.github.io/posts/2026-06-01-lab-setup.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-06-01-lab-setup.html</guid>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <category>靶场搭建</category>
+      <category>靶场</category>
+      <category>Docker</category>
+      <category>环境</category>
+      <category>练习</category>
+      <description>想练手，第一件事不是学 payload，是先把靶场跑起来。Docker、phpstudy、虚拟机这三条路我都踩过一遍，坑写在下面。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+</channel></rss>

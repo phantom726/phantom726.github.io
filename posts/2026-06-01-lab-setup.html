@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-root="../" data-theme="dark" data-theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑 | PHANTOM 怪盗日志</title>
+<meta name="description" content="想练手，第一件事不是学 payload，是先把靶场跑起来。Docker、phpstudy、虚拟机这三条路我都踩过一遍，坑写在下面。">
+<meta name="author" content="Phantom">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F1F0EC" media="(prefers-color-scheme: light)">
+<link rel="canonical" href="https://phantom726.github.io/posts/2026-06-01-lab-setup.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PHANTOM 怪盗日志">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑 | PHANTOM 怪盗日志">
+<meta property="og:description" content="想练手，第一件事不是学 payload，是先把靶场跑起来。Docker、phpstudy、虚拟机这三条路我都踩过一遍，坑写在下面。">
+<meta property="og:url" content="https://phantom726.github.io/posts/2026-06-01-lab-setup.html">
+<meta property="og:image" content="https://phantom726.github.io/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PHANTOM 怪盗日志">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑 | PHANTOM 怪盗日志">
+<meta name="twitter:description" content="想练手，第一件事不是学 payload，是先把靶场跑起来。Docker、phpstudy、虚拟机这三条路我都踩过一遍，坑写在下面。">
+<meta name="twitter:image" content="https://phantom726.github.io/assets/img/og.png">
+<meta property="article:published_time" content="2026-06-01T00:00:00+08:00">
+<meta property="article:modified_time" content="2026-06-01T00:00:00+08:00">
+<meta property="article:section" content="靶场搭建">
+<meta property="article:tag" content="靶场">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="环境">
+<meta property="article:tag" content="练习">
+
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/img/icon-192.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="PHANTOM 怪盗日志" href="../feed.xml">
+<link rel="alternate" type="application/feed+json" title="PHANTOM 怪盗日志" href="../feed.json">
+<link rel="preload" href="../assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/p5r.css">
+<script>
+/* 首屏状态：在样式生效前定好主题/字号/动效，避免闪一下。
+   注意：预渲染（Speculation Rules）时 storage 可能不可用，全部包在 try 里。 */
+(function(){var h=document.documentElement;try{
+  if(document.prerendering)h.classList.add('skip-loader');
+  if(sessionStorage.getItem('p5-loaded'))h.classList.add('skip-loader');
+  if(sessionStorage.getItem('p5-wipe')==='out')h.classList.add('wipe-on');
+  var t=localStorage.getItem('p5-theme')||'auto';
+  var light=window.matchMedia('(prefers-color-scheme: light)').matches;
+  h.setAttribute('data-theme', t==='auto' ? (light?'paper':'dark') : t);
+  h.setAttribute('data-theme-mode', t);
+  var fs=localStorage.getItem('p5-fs'); if(fs)h.style.setProperty('--fs-scale', fs);
+  if(localStorage.getItem('p5-motion')==='0')h.setAttribute('data-motion','off');
+}catch(e){}})();
+</script>
+<script type="speculationrules">
+{
+  "prefetch": [
+    {
+      "where": {
+        "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/*\\?*" } },
+          { "not": { "selector_matches": "a[target=_blank]" } },
+          { "not": { "selector_matches": "[rel~=nofollow]" } }
+        ]
+      },
+      "eagerness": "moderate"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://phantom726.github.io/posts/2026-06-01-lab-setup.html#post",
+      "headline": "把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑",
+      "name": "把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑",
+      "description": "想练手，第一件事不是学 payload，是先把靶场跑起来。Docker、phpstudy、虚拟机这三条路我都踩过一遍，坑写在下面。",
+      "inLanguage": "zh-CN",
+      "datePublished": "2026-06-01",
+      "dateModified": "2026-06-01",
+      "url": "https://phantom726.github.io/posts/2026-06-01-lab-setup.html",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://phantom726.github.io/posts/2026-06-01-lab-setup.html"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Phantom",
+        "url": "https://phantom726.github.io/"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Phantom"
+      },
+      "articleSection": "靶场搭建",
+      "keywords": "靶场, Docker, 环境, 练习",
+      "wordCount": 1111,
+      "timeRequired": "PT3M",
+      "image": "https://phantom726.github.io/assets/img/og.png"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首页",
+          "item": "https://phantom726.github.io/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "归档",
+          "item": "https://phantom726.github.io/archive.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑",
+          "item": "https://phantom726.github.io/posts/2026-06-01-lab-setup.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body data-page="post">
+
+<a class="skip" href="#main">跳到正文</a>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="nav__brand" href="../index.html">
+    <span class="nav__mark" aria-hidden="true">P</span>
+    <span class="nav__name">PHANTOM<em>怪盗日志 · TAKE YOUR HEART</em></span>
+  </a>
+  <nav class="nav__menu" id="navMenu" aria-label="主导航">
+    <a href="../index.html">首页<span>HOME</span></a>
+    <a href="../archive.html">归档<span>ARCHIVE</span></a>
+    <a href="../tags.html">标签<span>TAGS</span></a>
+    <a href="../about.html">关于<span>ABOUT</span></a>
+  </nav>
+  <div class="nav__side">
+    <button class="icon-btn" id="searchBtn" type="button" aria-label="搜索文章（快捷键 /）" title="搜索　／">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4.6-4.6" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn icon-btn--text" id="settingsBtn" type="button"
+            popovertarget="settings" aria-label="阅读与外观设置" title="阅读与外观">
+      <span aria-hidden="true">Aa</span>
+    </button>
+    <button class="icon-btn nav__burger" id="burger" type="button" aria-label="展开菜单" aria-expanded="false" aria-controls="navMenu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+  <!-- 文章页骨架。外壳（导航 / 页脚 / 面板 / 脚本）在 tools/shell.tpl.html -->
+  <article class="post" data-read="">
+    <header class="post-hero">
+      <div class="wrap post-hero__inner">
+        <nav class="crumb" aria-label="面包屑">
+          <a href="../index.html">首页</a><i>/</i>
+          <a href="../archive.html">归档</a><i>/</i>
+          <span>靶场搭建</span>
+        </nav>
+        <h1 class="post-title">把 DVWA 和 sqli-labs 跑起来：三条路，各自的坑</h1>
+        <div class="post-meta">
+          <time datetime="2026-06-01">DATE&nbsp;<b>2026-06-01</b></time>
+          
+          <span>1111 字 · 约 3 分钟读完</span>
+          <span>FILE&nbsp;<b>2026-06-01-lab-setup.md</b></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap post-body">
+      <div class="prose"><h2 id="先说结论">先说结论<a class="h-anchor" href="#先说结论" aria-label="复制这一节的链接" data-anchor="先说结论"></a></h2>
+<div class="table-wrap"><table><thead><tr>
+<th>方式</th>
+<th>上手难度</th>
+<th>适合谁</th>
+<th>主要麻烦</th>
+</tr>
+</thead><tbody><tr>
+<td>Docker</td>
+<td>低（装完 Docker 就完事）</td>
+<td>所有人，首选</td>
+<td>镜像拉取慢；Windows 要 WSL2</td>
+</tr>
+<tr>
+<td>phpstudy（Windows）</td>
+<td>中</td>
+<td>习惯 Windows、想顺便摸 PHP 配置</td>
+<td>PHP 版本兼容是老代码的雷</td>
+</tr>
+<tr>
+<td>VulnHub 虚拟机</td>
+<td>低</td>
+<td>想练完整渗透链（含信息收集、提权）</td>
+<td>网卡模式选错就白扫</td>
+</tr>
+</tbody></table></div>
+<p>三条路不冲突。<strong>DVWA / sqli-labs 练单点漏洞，VulnHub 练完整链路</strong>，建议都留着。</p>
+<hr>
+<h2 id="一docker最省事">一、Docker：最省事<a class="h-anchor" href="#一docker最省事" aria-label="复制这一节的链接" data-anchor="一docker最省事"></a></h2>
+<p>前提是本机装好 Docker Desktop（Windows 需要开 WSL2）。</p>
+<div class="code" data-lang="BASH" data-lines="7">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">7 行</span></div>
+<pre><code class="hljs language-bash"><span class="hljs-comment"># DVWA</span>
+docker pull vulnerables/web-dvwa
+docker run -d --name dvwa -p 8081:80 vulnerables/web-dvwa
+
+<span class="hljs-comment"># sqli-labs</span>
+docker pull acgpiano/sqli-labs
+docker run -d --name sqli -p 8082:80 acgpiano/sqli-labs</code></pre></div>
+<p>浏览器打开 <code>http://127.0.0.1:8081</code>，账号密码是 <code>admin</code> / <code>password</code>。</p>
+<p><strong>坑一：第一次进去不是直接能用。</strong> DVWA 要先点左侧的 <code>Setup / Reset DB</code>，再点 <code>Create / Reset Database</code>，否则所有模块都会报连不上数据库。</p>
+<p><strong>坑二：默认安全等级是 impossible。</strong> 进去先在 <code>DVWA Security</code> 里改成 <code>low</code>，不然你会以为自己的 payload 写错了。</p>
+<p><strong>坑三：镜像拉不动。</strong> 这是纯粹的网速问题，换个时间段或者配一下镜像加速器，别去怀疑 Docker 装坏了。</p>
+<p><strong>坑四：容器一停数据就没了。</strong> 想保留自己的记录就挂个卷：</p>
+<div class="code" data-lang="BASH" data-lines="1">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">1 行</span></div>
+<pre><code class="hljs language-bash">docker run -d --name dvwa -p 8081:80 -v dvwa-db:/var/lib/mysql vulnerables/web-dvwa</code></pre></div>
+<p><strong>常用操作</strong>：</p>
+<div class="code" data-lang="BASH" data-lines="5">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">5 行</span></div>
+<pre><code class="hljs language-bash">docker ps -a              <span class="hljs-comment"># 看所有容器</span>
+docker stop dvwa          <span class="hljs-comment"># 停</span>
+docker start dvwa         <span class="hljs-comment"># 再开</span>
+docker <span class="hljs-built_in">rm</span> -f dvwa         <span class="hljs-comment"># 删掉重来</span>
+docker logs dvwa          <span class="hljs-comment"># 起不来的时候看这里</span></code></pre></div>
+<hr>
+<h2 id="二phpstudywindows-上最直观">二、phpstudy：Windows 上最直观<a class="h-anchor" href="#二phpstudywindows-上最直观" aria-label="复制这一节的链接" data-anchor="二phpstudywindows-上最直观"></a></h2>
+<p>把 DVWA 或 sqli-labs 的源码丢进 phpstudy 的 <code>WWW</code> 目录，建个站点指向它，就完事了。好处是你能顺手改 PHP 配置、看错误日志——Docker 里改这些要进容器，麻烦。</p>
+<p>但这条路有两个真实的雷：</p>
+<p><strong>雷一：PHP 版本。</strong> sqli-labs 的老代码大量使用 <code>mysql_*</code> 系列函数，这套函数在 PHP 7.0 里<strong>已经被彻底移除</strong>。你用 phpstudy 自带的 PHP 7.x 打开，只会看到一片 <code>Call to undefined function mysql_connect()</code>。</p>
+<p>三个选择：</p>
+<ol>
+<li>在 phpstudy 里切一个 PHP 5.6 的版本（最省事）</li>
+<li>换 sqli-labs 的 mysqli 分支</li>
+<li>干脆回去用 Docker 版（它的镜像里已经配好了）</li>
+</ol>
+<p>DVWA 新版要求 PHP 7 以上，反而不能用 5.6，两个靶场对 PHP 版本的要求是<strong>相反的</strong>——这就是为什么我不建议只靠 phpstudy 一个环境。</p>
+<p><strong>雷二：端口占用。</strong> phpstudy 装完可能自带几个站点，80 被占了之后你新加的站点会静默地起不来。先确认端口：</p>
+<div class="code" data-lang="BASH" data-lines="1">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">1 行</span></div>
+<pre><code class="hljs language-bash">netstat -ano | findstr :80</code></pre></div>
+<hr>
+<h2 id="三vulnhub练真正的渗透链">三、VulnHub：练真正的渗透链<a class="h-anchor" href="#三vulnhub练真正的渗透链" aria-label="复制这一节的链接" data-anchor="三vulnhub练真正的渗透链"></a></h2>
+<p>DVWA 是「给你一个洞，你去打」；VulnHub 是「给你一台机器，你自己找洞」。后者更接近真实场景，也更练人。</p>
+<p>流程：</p>
+<ol>
+<li>在 vulnhub.com 下 <code>.ova</code> / <code>.vmdk</code></li>
+<li>用 VMware 或 VirtualBox 导入</li>
+<li><strong>网卡模式改成「仅主机（Host-Only）」或 NAT</strong></li>
+<li>扫网段找到它的 IP，开始打</li>
+</ol>
+<p><strong>唯一但致命的坑：网络模式。</strong> 默认的桥接模式在某些校园网/宿舍网里会拿不到 IP，或者因为网络做了客户端隔离，你的攻击机和靶机根本互相看不见——症状就是扫了半天网段什么都没有。</p>
+<p>判断方法：在靶机控制台敲一下看它有没有拿到地址；拿不到就换成 Host-Only，并给两个网卡配同一网段（比如 <code>192.168.56.0/24</code>）。</p>
+<p><strong>入门靶机推荐</strong>（由易到难）：</p>
+<ul>
+<li><strong>Metasploitable 2</strong> —— 洞多到离谱，用来熟悉工具链</li>
+<li><strong>Kioptrix 系列</strong> —— 老，但漏洞点很典型</li>
+<li><strong>DC 系列</strong> —— 完整的 Windows AD 场景，练提权很合适</li>
+<li><strong>HackTheBox / TryHackMe</strong> —— 不是本地靶机，但题面和引导做得更细</li>
+</ul>
+<hr>
+<h2 id="四几条关于在哪练的话">四、几条关于「在哪练」的话<a class="h-anchor" href="#四几条关于在哪练的话" aria-label="复制这一节的链接" data-anchor="四几条关于在哪练的话"></a></h2>
+<blockquote>
+<p>上面三种方式有个共同点：<strong>靶场跑在你自己的机器或者你自己的局域网里</strong>。这是判断「能不能动手」的唯一标准——不是「这个站看起来没什么人用」，也不是「我只是扫个目录不算攻击」。</p>
+</blockquote>
+<p>《网络安全法》第二十七条写的是「不得从事非法侵入他人网络、干扰他人网络正常功能、窃取网络数据等危害网络安全的活动」，扫描本身就在「干扰」的射程里。学校的域名、别人的站点、SRC 范围外的资产，统统不要碰。</p>
+<p>练手的合法出口就这几类：</p>
+<ul>
+<li>自建靶场（就是本文这些）</li>
+<li>CTF 比赛的靶机（有明确授权）</li>
+<li>SRC 平台<strong>范围内</strong>的资产（范围就是授权）</li>
+<li>自己买的云服务器</li>
+</ul>
+<p>这条线画清楚了，剩下的都能放心折腾。</p>
+<hr>
+<h2 id="最后">最后<a class="h-anchor" href="#最后" aria-label="复制这一节的链接" data-anchor="最后"></a></h2>
+<p>靶场搭好之后，建议立刻做一件事：<strong>把「怎么跑起来」写成自己的笔记</strong>。</p>
+<p>因为你会重装系统、会换电脑、会过半年忘记镜像名。到时候最不想干的事，就是重新查一遍怎么建数据库。</p>
+</div>
+      <aside class="toc" id="toc" aria-label="文章目录"><div class="toc__bar"><span>CONTENTS</span><i id="tocPct">0%</i></div><div class="toc__track"><div class="toc__fill" id="tocFill"></div></div><ul class="toc__list"><li class="lv2"><a href="#先说结论" data-t="先说结论">先说结论</a></li><li class="lv2"><a href="#一docker最省事" data-t="一docker最省事">一、Docker：最省事</a></li><li class="lv2"><a href="#二phpstudywindows-上最直观" data-t="二phpstudywindows-上最直观">二、phpstudy：Windows 上最直观</a></li><li class="lv2"><a href="#三vulnhub练真正的渗透链" data-t="三vulnhub练真正的渗透链">三、VulnHub：练真正的渗透链</a></li><li class="lv2"><a href="#四几条关于在哪练的话" data-t="四几条关于在哪练的话">四、几条关于「在哪练」的话</a></li><li class="lv2"><a href="#最后" data-t="最后">最后</a></li></ul></aside>
+    </div>
+  </article>
+
+  <div class="wrap">
+    <div class="post-foot">
+      <div class="post-foot__tags"><span class="tag"><span>#靶场</span></span><span class="tag"><span>#Docker</span></span><span class="tag"><span>#环境</span></span><span class="tag"><span>#练习</span></span></div>
+      <nav class="pager" aria-label="上下篇"><a class="is-prev" href="2026-09-17-web-recon-order.html"><span class="pager__dir">← NEWER</span><span class="pager__t">Web 测试的第一步：信息收集的固定顺序</span></a><span class="pager__box is-next is-empty"><span class="pager__dir">OLDER →</span><span class="pager__t">— 没有了 —</span></span></nav>
+    </div>
+  </div>
+
+  <section class="related"><div class="wrap"><h2 class="related__t">RELATED <i>相关阅读</i></h2><div class="related__grid"><a class="related__item" href="2026-09-22-p5r-design-notes.html"><span class="related__cat">折腾记录</span><span class="related__title">这套 P5R 风格的博客是怎么搭的</span><span class="related__meta">2026.09.22 · 3 min</span></a><a class="related__item" href="2026-09-21-how-to-write.html"><span class="related__cat">随笔</span><span class="related__title">发一篇新文章只要三步</span><span class="related__meta">2026.09.21 · 1 min</span></a><a class="related__item" href="2026-09-20-markdown-cheatsheet.html"><span class="related__cat">随笔</span><span class="related__title">站内排版速查：把每种元素摆一遍</span><span class="related__meta">2026.09.20 · 3 min</span></a></div></div></section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <div class="foot__big">PHANTOM<br>THIEF LOG</div>
+    <div class="foot__links">
+      <a href="../index.html">首页</a>
+      <a href="../archive.html">归档</a>
+      <a href="../tags.html">标签</a>
+      <a href="../about.html">关于</a>
+      <a href="../feed.xml">RSS</a>
+      <a href="https://github.com/phantom726" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="foot__copy">
+      <span>© 2026 <b>PHANTOM</b> · TAKE YOUR HEART</span>
+      <span><a href="../sitemap.xml">SITEMAP</a> · <a href="../feed.json">JSON FEED</a></span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" type="button" aria-label="返回顶部"><span>TOP</span></button>
+
+<!-- ============ 阅读与外观（原生 Popover） ============ -->
+<div class="panel" id="settings" popover>
+  <div class="panel__hd">READING SETUP<em>阅读与外观</em></div>
+
+  <div class="panel__row">
+    <span class="panel__lb">外观</span>
+    <div class="seg" role="group" aria-label="外观模式">
+      <button type="button" data-theme-opt="auto">跟随系统</button>
+      <button type="button" data-theme-opt="dark">深色</button>
+      <button type="button" data-theme-opt="paper">纸白</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">正文字号</span>
+    <div class="seg">
+      <button type="button" data-fs="-1" aria-label="缩小字号">A−</button>
+      <button type="button" data-fs="0" aria-label="恢复默认字号">100%</button>
+      <button type="button" data-fs="1" aria-label="放大字号">A+</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">动效</span>
+    <div class="seg">
+      <button type="button" data-motion-opt="on">全开</button>
+      <button type="button" data-motion-opt="off">减少</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">界面音效</span>
+    <div class="seg">
+      <button type="button" data-sfx-opt="off">关</button>
+      <button type="button" data-sfx-opt="on">开</button>
+    </div>
+  </div>
+
+  <p class="panel__tip">设置存在本机浏览器里，不会上传。按 <kbd>Esc</kbd> 关闭。</p>
+</div>
+
+<!-- ============ 命令面板（原生 dialog，自带焦点管理） ============ -->
+<dialog class="palette" id="palette" aria-label="搜索与快捷命令">
+  <div class="palette__box">
+    <div class="palette__hd">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4.6-4.6" stroke-linecap="round"/></svg>
+      <input id="paletteInput" type="text" placeholder="搜索文章，或输入命令…"
+             autocomplete="off" autocorrect="off" spellcheck="false"
+             role="combobox" aria-expanded="true" aria-controls="paletteList" aria-autocomplete="list">
+      <span class="palette__kbd">ESC</span>
+    </div>
+    <ul class="palette__list" id="paletteList" role="listbox" aria-label="结果"></ul>
+    <div class="palette__ft">
+      <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+      <span><kbd>↵</kbd> 打开</span>
+      <span><kbd>/</kbd> 唤起</span>
+      <span id="paletteCount"></span>
+    </div>
+  </div>
+</dialog>
+<p class="sr-only" id="live" aria-live="polite"></p>
+
+<!-- 转场擦除：仅在不支持原生 View Transitions 的浏览器里启用 -->
+<div class="wipe" id="wipe" aria-hidden="true">
+  <div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div>
+  <div class="wipe__stamp"><span>PHANTOM</span></div>
+</div>
+
+<div class="loader" id="loader">
+  <div class="loader__inner">
+    <div class="loader__bar"><div class="loader__fill"></div></div>
+    <div class="loader__t">NOW <i>LOADING</i></div>
+    <div class="loader__s">PHANTOM THIEF LOG</div>
+  </div>
+</div>
+<noscript><style>
+  .loader{display:none!important}
+  .reveal,.pop,.p5-menu__item,.card-hero{opacity:1!important;transform:none!important}
+  .palette,.panel{display:none!important}
+</style></noscript>
+
+<script src="../assets/js/config.js" defer></script>
+<script src="../assets/js/posts-data.js" defer></script>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

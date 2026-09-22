@@ -1,0 +1,117 @@
+  <!-- ============================ HERO ============================ -->
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="hero__stripes"></div>
+    </div>
+
+    <div class="wrap hero__inner">
+      <div>
+        <div class="hero__eyebrow"><span>NO.001 &nbsp;//&nbsp; 怪盗日志 &nbsp;//&nbsp; EST.2026</span></div>
+
+        <h1 class="hero__title">
+          <span class="l1">PHANTOM</span>
+          <span class="l2">THIEF LOG</span>
+        </h1>
+
+        <p class="hero__sub">记录那些把系统撬开的瞬间。</p>
+        <p class="hero__desc">
+          CTF 复盘 · 渗透测试笔记 · 逆向与二进制 · 等保合规。
+          写下来的不一定是标准答案，但每一条都亲自跑通过。
+        </p>
+
+        <ul class="p5-menu">
+          <li>
+            <a class="p5-menu__item" href="archive.html" style="--i:0">
+              <span class="p5-menu__num">01</span>
+              <span class="p5-menu__text">
+                <span class="p5-menu__cn">归档</span>
+                <span class="p5-menu__en">ARCHIVE ／ アーカイブ</span>
+              </span>
+              <span class="p5-menu__arrow" aria-hidden="true">▶</span>
+            </a>
+          </li>
+          <li>
+            <a class="p5-menu__item" href="tags.html" style="--i:1">
+              <span class="p5-menu__num">02</span>
+              <span class="p5-menu__text">
+                <span class="p5-menu__cn">标签</span>
+                <span class="p5-menu__en">TAGS ／ タグ</span>
+              </span>
+              <span class="p5-menu__arrow" aria-hidden="true">▶</span>
+            </a>
+          </li>
+          <li>
+            <a class="p5-menu__item" href="about.html" style="--i:2">
+              <span class="p5-menu__num">03</span>
+              <span class="p5-menu__text">
+                <span class="p5-menu__cn">关于</span>
+                <span class="p5-menu__en">ABOUT ／ プロフィール</span>
+              </span>
+              <span class="p5-menu__arrow" aria-hidden="true">▶</span>
+            </a>
+          </li>
+          <li>
+            <a class="p5-menu__item" href="#search" style="--i:3">
+              <span class="p5-menu__num">04</span>
+              <span class="p5-menu__text">
+                <span class="p5-menu__cn">检索</span>
+                <span class="p5-menu__en">SEARCH ／ 検索</span>
+              </span>
+              <span class="p5-menu__arrow" aria-hidden="true">▶</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 怪盗档案 -->
+      <aside class="card-hero">
+        <div class="card-hero__avatar"><img src="assets/img/avatar.svg" alt="Phantom 的徽记"></div>
+        <div class="card-hero__name">PHANTOM</div>
+        <div class="card-hero__role">Security Researcher ／ 桂林</div>
+
+        <div class="card-hero__stats">
+          <div class="card-hero__stat"><b data-stat="posts">0</b><span>Posts</span></div>
+          <div class="card-hero__stat"><b data-stat="cats">0</b><span>Category</span></div>
+          <div class="card-hero__stat"><b data-stat="tags">0</b><span>Tags</span></div>
+          <div class="card-hero__stat"><b data-stat="words">0</b><span>Words</span></div>
+        </div>
+
+        <div class="card-hero__uptime" id="uptime">RUNNING —</div>
+
+        <div class="foot__links" style="margin-top:14px;justify-content:center">
+          <a href="https://github.com/phantom726" target="_blank" rel="noopener">GitHub</a>
+          <a href="feed.xml">RSS</a>
+          <a href="about.html">更多</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============================ LATEST ============================ -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 class="sec-head__title">LATEST</h2>
+        <span class="sec-head__sub">最新日志</span>
+        <span class="sec-head__rule" aria-hidden="true"></span>
+        <a href="archive.html" class="tag"><span>全部归档 →</span></a>
+      </div>
+      <div class="grid" id="latestPosts"></div>
+    </div>
+  </section>
+
+  <!-- ============================ 免责 ============================ -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="about-panel reveal">
+        <h2 class="dsp-cn" style="font-size:26px;margin:0 0 12px">BEFORE YOU READ</h2>
+        <p style="margin:0 0 10px;color:var(--fg-dim);font-size:14.5px">
+          站内所有技术内容仅用于<strong style="color:var(--fg)">授权范围内的安全测试</strong>与学习研究。
+        </p>
+        <p style="margin:0;color:var(--fg-mute);font-size:13.5px">
+          对未授权的目标进行扫描、爆破或入侵，在《网络安全法》下属违法行为。练手请使用自建靶场：
+          DVWA、sqli-labs、VulnHub，或者自己搭的 Docker 环境。
+        </p>
+      </div>
+    </div>
+  </section>
