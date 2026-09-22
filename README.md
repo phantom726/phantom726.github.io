@@ -124,40 +124,58 @@ nmap -sV -p- 10.10.10.10
 
 ---
 
-## 四、部署（首次）
+## 四、部署
 
-仓库已经建好了（`phantom726/phantom.github.io`，空的），本地代码推上去即可。
+> **本项目已经推过一次了**（2026-09-22，commit `16d976d`）。下面留着给以后换机器或重建时用。
 
-**在 Git Bash / PowerShell 里，先进入项目根目录（就是有 `index.html` 的那一层），然后依次执行：**
+### 已经配好的状态
+
+| 项目 | 值 |
+| --- | --- |
+| 远程 | `origin` → `git@github.com:phantom726/phantom.github.io.git`（**SSH**） |
+| 分支 | `main` |
+| 身份 | 已全局配置（`phantom` / `3226607284@qq.com`） |
+| 认证方式 | **SSH key**（`~/.ssh/id_ed25519`，已登记到 GitHub） |
+
+**用 SSH 不是随便选的**：这台机器直连 `github.com:443` 不通（要走本机 `127.0.0.1:10808` 的 SOCKS5 代理），
+但 **22 端口直连是通的**，且 SSH key 早就配好并登记过了 ⇒ **走 SSH 推送完全不需要代理、不需要 token**。
+
+### 首次部署的完整流程（重建时参考）
 
 ```bash
-# 1. 初始化仓库（如果目录里还没有 .git）
+# 进入项目根目录（有 index.html 的那一层）
+cd /path/to/phantom.github.io
+
 git init
 git branch -M main
-
-# 2. 配置提交身份（只需一次）
-git config user.name "phantom"
-git config user.email "3226607284@qq.com"
-
-# 3. 提交全部文件
 git add -A
 git commit -m "feat: P5R 风格博客上线"
-
-# 4. 关联远程仓库
-git remote add origin https://github.com/phantom726/phantom.github.io.git
-# 如果提示 remote 已存在，改成：git remote set-url origin https://github.com/phantom726/phantom.github.io.git
-
-# 5. 推送
+git remote add origin git@github.com:phantom726/phantom.github.io.git
 git push -u origin main
 ```
 
-**每一步的预期输出：**
+**预期输出**：最后是 `branch 'main' set up to track 'origin/main'.` 和 `* [new branch] main -> main`。
 
-- `git init` → `Initialized empty Git repository in ...`
-- `git commit` → `[main (root-commit) xxxxxxx] feat: P5R 风格博客上线` 后面跟一长串 `create mode 100644 ...`
-- `git push` → 最后一行是 `branch 'main' set up to track 'origin/main'.`
+### 日常更新
 
-**然后开启 GitHub Pages：**
+```bash
+node tools/blog.js          # 构建
+node tools/check.js         # 自检
+git add -A
+git commit -m "post: 文章标题"
+git push
+```
+
+**改动是否真的推上去了**，从远端读才算数：
+
+```bash
+git ls-remote origin main   # 远端 main 的 hash
+git rev-parse main          # 本地 main 的 hash
+```
+
+两个 hash 一样 = 推成功了。
+
+### 开启 GitHub Pages（只需一次）
 
 1. 打开 https://github.com/phantom726/phantom.github.io/settings/pages
 2. **Source** 选 `Deploy from a branch`
@@ -166,7 +184,18 @@ git push -u origin main
 
 因为仓库名正好是 `phantom.github.io`，属于**用户主页仓库**，所以地址就是根域名，不需要加子路径。
 
-> 如果 `git push` 卡住或报代理相关的错（`ServicePointManager 不支持具有 socks5h 方案的代理` 之类），是代理配置问题，跟本站无关。
+### 如果哪天要改用 HTTPS（不推荐，仅备查）
+
+这台机器直连 GitHub 不通，必须给 git 配代理。只给 github 开、不动全局（否则会误伤内网 Gitea）：
+
+```bash
+git config --global http.https://github.com.proxy socks5://127.0.0.1:10808
+git ls-remote https://github.com/phantom726/phantom.github.io.git   # 验证网络层
+```
+
+GitHub 已禁用密码认证，HTTPS 方式必须用 PAT（Scope 勾 `repo`）。
+凭据管理器（GCM）跑在 .NET 上不支持 SOCKS，可能报
+`ServicePointManager 不支持具有 socks5 方案的代理` —— **那是噪音不是阻塞**，git 会回退到终端提示，手输账号 + PAT 照样能推。
 
 ---
 
