@@ -187,40 +187,60 @@ sqlmap -r req.txt --batch
 | --- | --- |
 | 远程 | `origin` → `git@github.com:phantom726/phantom726.github.io.git`（SSH） |
 | 分支 | `main` |
-| 发布目录 | `docs/` |
+| 发布方式 | GitHub Actions（推送到 `main` 后自动构建并发布 `docs/`） |
+| 工作流 | `.github/workflows/deploy.yml` |
 | 认证 | SSH key（`~/.ssh/id_ed25519`，已登记到 GitHub） |
 
 用 SSH 不是随便选的：这台机器直连 `github.com:443` 不通（要走本机 `127.0.0.1:10808` 的 SOCKS5 代理），但 **22 端口直连是通的**，SSH key 也早就配好了。走 SSH 推送完全不需要代理、不需要 token。
 
-### GitHub Pages 设置
+### 发布方式：GitHub Actions（自动构建）
 
-仓库改名成 `phantom726.github.io` 之后，站点地址变成了根域名 **https://phantom726.github.io/**，但发布目录要跟着改一次：
+仓库里已经放了 `.github/workflows/deploy.yml`，但**需要在网页上启用一次**：
 
 1. 打开 https://github.com/phantom726/phantom726.github.io/settings/pages
-2. **Source** 选 `Deploy from a branch`
-3. **Branch** 选 `main`，目录选 **`/docs`**（不是 `/ (root)`）
-4. **Save**，等一两分钟
+2. **Source** 选 **`GitHub Actions`**（不是 `Deploy from a branch`）
+3. 保存即可，不用再选分支和目录
 
-> 目录选错站点会 404。因为构建产物都在 `docs/`，根目录只剩源码。
+启用之后，**只要推送到 `main` 就会自动构建并发布**：
+
+- 在本机改完 `src/` 里的东西 → `git push` → 自动上线
+- 或者直接在 GitHub 网页编辑 `src/posts/xxx.md` → Commit → 自动上线
+
+大概半分钟到一分钟跑完，进度看仓库的 **Actions** 标签页。
+
+> Source 如果停在 `Deploy from a branch`，Pages 只会把**最后一次提交的 `docs/` 产物**发出去，
+> 改 `.md` 不会有任何变化 —— 因为没有东西去构建它。这正是「改了不生效」的原因。
 
 ### 日常更新
 
+**方式一：本机写（推荐，能实时预览）**
+
 ```bash
-node src/tools/blog.js     # 构建
-node src/tools/check.js    # 自检
-git add -A
-git commit -m "post: 标题"
-git push
+node src/tools/blog.js serve                     # 另开一个窗口，边写边看
+node src/tools/blog.js new "标题" --cat CTF --tags SQL注入
+# 写文章……
+node src/tools/blog.js                           # 构建
+node src/tools/check.js                          # 自检
+git add -A && git commit -m "post: 标题" && git push
 ```
 
-**改动是否真的推上去了**，从远端读才算数：
+**方式二：GitHub 网页直接改（不需要装 Node）**
+
+1. 打开 https://github.com/phantom726/phantom726.github.io/blob/main/src/posts/
+2. 点开要改的文件 → 右上角铅笔图标 → 编辑 → **Commit changes**
+3. Actions 自动构建部署，一两分钟后刷新站点
+
+两种方式可以混用。本地 `docs/` 里是构建产物，网页改的那次不会提交回来，
+想让仓库里的产物跟线上一致，本地拉下来跑一次 `node src/tools/blog.js` 再提交即可。
+
+**推没推上去**，从远端读才算数：
 
 ```bash
 git ls-remote origin main   # 远端 main 的 hash
 git rev-parse main          # 本地 main 的 hash
 ```
 
-两个一样就是成功了。
+两个一样就是成功了。站点有没有更新，看 Actions 页面最新一次运行是不是绿勾。
 
 ### 首次部署（重建时参考）
 
@@ -232,6 +252,14 @@ git commit -m "feat: 建站"
 git remote add origin git@github.com:phantom726/phantom726.github.io.git
 git push -u origin main
 ```
+
+推完去 Settings → Pages → Source 选 `GitHub Actions`。
+
+### 备选：不用 Actions 的老方式
+
+如果偏好「提交产物」那套（Source 选 `Deploy from a branch` + `/docs`），
+那就必须每次在本机跑完 `node src/tools/blog.js` 再推送，否则线上不会变。
+Actions 方式的价值在于：**不用装 Node、不用开电脑，手机上也能发文章**。
 
 ---
 

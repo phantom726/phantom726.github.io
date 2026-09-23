@@ -1,0 +1,58 @@
+# 推送到 main 之后，自动构建并把 docs/ 发布到 GitHub Pages。
+# 启用方式：仓库 Settings → Pages → Source 选「GitHub Actions」。
+# 启用后，改 src/ 里的任何东西（包括直接在网页上编辑 .md），提交即自动上线。
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # 也可以在 Actions 页面手动点一下运行
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个部署；新的排队等待，而不是取消进行中的那个
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 取出仓库
+        uses: actions/checkout@v4
+
+      - name: 装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 配置 Pages
+        uses: actions/configure-pages@v5
+
+      - name: 构建
+        run: node src/tools/blog.js
+
+      # 自检失败只提示，不拦部署 —— 内容里写错一个链接不该导致整站发不出去
+      - name: 自检
+        continue-on-error: true
+        run: node src/tools/check.js
+
+      - name: 上传产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署
+        id: deployment
+        uses: actions/deploy-pages@v4
