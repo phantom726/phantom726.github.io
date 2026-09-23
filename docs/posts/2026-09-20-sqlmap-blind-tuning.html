@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-root="../" data-theme="dark" data-theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sqlmap 抽不出数据时，按这个顺序排查 | PHANTOM 怪盗日志</title>
+<meta name="description" content="确认有注入但 sqlmap 跑不出东西，多数时候不是目标的问题，是请求包或参数的写法有问题。下面是我不按顺序试就会绕远路的一套流程。">
+<meta name="author" content="Phantom">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F1F0EC" media="(prefers-color-scheme: light)">
+<link rel="canonical" href="https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PHANTOM 怪盗日志">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="sqlmap 抽不出数据时，按这个顺序排查 | PHANTOM 怪盗日志">
+<meta property="og:description" content="确认有注入但 sqlmap 跑不出东西，多数时候不是目标的问题，是请求包或参数的写法有问题。下面是我不按顺序试就会绕远路的一套流程。">
+<meta property="og:url" content="https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html">
+<meta property="og:image" content="https://phantom726.github.io/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PHANTOM 怪盗日志">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="sqlmap 抽不出数据时，按这个顺序排查 | PHANTOM 怪盗日志">
+<meta name="twitter:description" content="确认有注入但 sqlmap 跑不出东西，多数时候不是目标的问题，是请求包或参数的写法有问题。下面是我不按顺序试就会绕远路的一套流程。">
+<meta name="twitter:image" content="https://phantom726.github.io/assets/img/og.png">
+<meta property="article:published_time" content="2026-09-20T00:00:00+08:00">
+<meta property="article:modified_time" content="2026-09-20T00:00:00+08:00">
+<meta property="article:section" content="渗透测试">
+<meta property="article:tag" content="SQL注入">
+<meta property="article:tag" content="sqlmap">
+<meta property="article:tag" content="盲注">
+
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/img/icon-192.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="PHANTOM 怪盗日志" href="../feed.xml">
+<link rel="alternate" type="application/feed+json" title="PHANTOM 怪盗日志" href="../feed.json">
+<link rel="preload" href="../assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/p5r.css">
+<script>
+/* 首屏状态：在样式生效前定好主题/字号/动效，避免闪一下。
+   注意：预渲染（Speculation Rules）时 storage 可能不可用，全部包在 try 里。 */
+(function(){var h=document.documentElement;try{
+  if(document.prerendering)h.classList.add('skip-loader');
+  if(sessionStorage.getItem('p5-loaded'))h.classList.add('skip-loader');
+  if(sessionStorage.getItem('p5-wipe')==='out')h.classList.add('wipe-on');
+  var t=localStorage.getItem('p5-theme')||'auto';
+  var light=window.matchMedia('(prefers-color-scheme: light)').matches;
+  h.setAttribute('data-theme', t==='auto' ? (light?'paper':'dark') : t);
+  h.setAttribute('data-theme-mode', t);
+  var fs=localStorage.getItem('p5-fs'); if(fs)h.style.setProperty('--fs-scale', fs);
+  if(localStorage.getItem('p5-motion')==='0')h.setAttribute('data-motion','off');
+}catch(e){}})();
+</script>
+<script type="speculationrules">
+{
+  "prefetch": [
+    {
+      "where": {
+        "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/*\\?*" } },
+          { "not": { "selector_matches": "a[target=_blank]" } },
+          { "not": { "selector_matches": "[rel~=nofollow]" } }
+        ]
+      },
+      "eagerness": "moderate"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html#post",
+      "headline": "sqlmap 抽不出数据时，按这个顺序排查",
+      "name": "sqlmap 抽不出数据时，按这个顺序排查",
+      "description": "确认有注入但 sqlmap 跑不出东西，多数时候不是目标的问题，是请求包或参数的写法有问题。下面是我不按顺序试就会绕远路的一套流程。",
+      "inLanguage": "zh-CN",
+      "datePublished": "2026-09-20",
+      "dateModified": "2026-09-20",
+      "url": "https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Phantom",
+        "url": "https://phantom726.github.io/"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Phantom"
+      },
+      "articleSection": "渗透测试",
+      "keywords": "SQL注入, sqlmap, 盲注",
+      "wordCount": 777,
+      "timeRequired": "PT2M",
+      "image": "https://phantom726.github.io/assets/img/og.png"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首页",
+          "item": "https://phantom726.github.io/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "学习日志",
+          "item": "https://phantom726.github.io/archive.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "sqlmap 抽不出数据时，按这个顺序排查",
+          "item": "https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body data-page="post">
+
+<a class="skip" href="#main">跳到正文</a>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="nav__brand" href="../index.html">
+    <span class="nav__mark" aria-hidden="true">P</span>
+    <span class="nav__name">PHANTOM<em>怪盗日志 · TAKE YOUR HEART</em></span>
+  </a>
+  <nav class="nav__menu" id="navMenu" aria-label="主导航">
+    <a href="../index.html">首页<span>HOME</span></a>
+    <a href="../archive.html">学习日志<span>LOGBOOK</span></a>
+    <a href="../tags.html">标签<span>TAGS</span></a>
+    <a href="../about.html">关于<span>ABOUT</span></a>
+  </nav>
+  <div class="nav__side">
+    <button class="icon-btn" id="searchBtn" type="button" aria-label="搜索文章（快捷键 /）" title="搜索　／">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4.6-4.6" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn icon-btn--text" id="settingsBtn" type="button"
+            popovertarget="settings" aria-label="阅读与外观设置" title="阅读与外观">
+      <span aria-hidden="true">Aa</span>
+    </button>
+    <button class="icon-btn nav__burger" id="burger" type="button" aria-label="展开菜单" aria-expanded="false" aria-controls="navMenu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+  <!-- 文章页骨架。外壳（导航 / 页脚 / 面板 / 脚本）在 tools/shell.tpl.html -->
+  <article class="post" data-read="fresh">
+    <header class="post-hero">
+      <div class="wrap post-hero__inner">
+        <nav class="crumb" aria-label="面包屑">
+          <a href="../index.html">首页</a><i>/</i>
+          <a href="../archive.html">学习日志</a><i>/</i>
+          <span>渗透测试</span>
+        </nav>
+        <h1 class="post-title">sqlmap 抽不出数据时，按这个顺序排查</h1>
+        <div class="post-meta">
+          <time datetime="2026-09-20">DATE&nbsp;<b>2026-09-20</b></time>
+          
+          <span>777 字 · 约 2 分钟读完</span>
+          <span>FILE&nbsp;<b>2026-09-20-sqlmap-blind-tuning.md</b></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap post-body">
+      <div class="prose"><p>用过 sqlmap 的人大概都遇到过这种情况：明明手工测出来有注入，丢给 sqlmap 却什么都不出。大部分时候问题不在目标身上，在你的请求包或者参数上。</p>
+<h2 id="第一步先证明不用-sqlmap-也能通">第一步：先证明不用 sqlmap 也能通<a class="h-anchor" href="#第一步先证明不用-sqlmap-也能通" aria-label="复制这一节的链接" data-anchor="第一步先证明不用-sqlmap-也能通"></a></h2>
+<p>这一步很多人跳过，但它最省时间。手工发一个正常请求，确认三件事：</p>
+<ul>
+<li>目标还活着，响应时间正常</li>
+<li>你带的 Cookie 和 Header 还有效</li>
+<li>参数名没写错</li>
+</ul>
+<p>手工都通不了，sqlmap 更不可能通。花 30 秒能省掉后面半小时。</p>
+<h2 id="第二步确认是不是真注入">第二步：确认是不是真注入<a class="h-anchor" href="#第二步确认是不是真注入" aria-label="复制这一节的链接" data-anchor="第二步确认是不是真注入"></a></h2>
+<p><code>not vulnerable</code> 有两种可能：真的没有，或者探测被拦了。</p>
+<p>区分办法是手工构造一个必定生效的请求。时间盲注的话，在授权目标上发一个 <code>?id=1&#39; AND SLEEP(5)-- -</code>，看是不是真的慢了 5 秒。没慢就说明：</p>
+<ul>
+<li>参数的位置不对，可能在 Cookie 或 Header 里</li>
+<li>WAF 把 <code>SLEEP</code> 拦了</li>
+<li>数据库不是 MySQL</li>
+</ul>
+<h2 id="第三步请求包本身的问题">第三步：请求包本身的问题<a class="h-anchor" href="#第三步请求包本身的问题" aria-label="复制这一节的链接" data-anchor="第三步请求包本身的问题"></a></h2>
+<p>这一类最容易被忽略，而且症状特别像&quot;目标有问题&quot;。</p>
+<p><strong>HTTP/2 的请求行要降级。</strong> 从浏览器或 Burp 里复制的包如果是 HTTP/2，开头长这样：</p>
+<div class="code" data-lang="CODE" data-lines="3">
+<div class="code__bar"><span class="code__lang">CODE</span><span class="code__lines">3 行</span></div>
+<pre><code class="hljs"><span class="hljs-symbol">:method</span>: <span class="hljs-variable constant_">GET</span>
+<span class="hljs-symbol">:path</span>: <span class="hljs-regexp">/api/user</span>?id=<span class="hljs-number">1</span>
+<span class="hljs-symbol">:authority</span>: example.com</code></pre></div>
+<p>sqlmap 不认这种格式，要改回 HTTP/1.1 的写法：</p>
+<div class="code" data-lang="CODE" data-lines="2">
+<div class="code__bar"><span class="code__lang">CODE</span><span class="code__lines">2 行</span></div>
+<pre><code class="hljs"><span class="hljs-keyword">GET</span> <span class="hljs-string">/api/user?id=1</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>example.com</code></pre></div>
+<p><strong>用 <code>-r</code> 比 <code>-u</code> 稳。</strong> 从 Burp 里 Save item 出来的请求包带着完整的 Header、Cookie、body，自己用 <code>-u</code> 拼少一截，sqlmap 就可能走到别的分支上去。</p>
+<p><strong>改过请求包就要 <code>--flush-session</code>。</strong> sqlmap 会把探测结果缓存到 <code>~/.sqlmap/output/&lt;host&gt;/</code>，改了参数没清缓存，它直接读旧结论，你会觉得&quot;改了跟没改一样&quot;。</p>
+<div class="code" data-lang="BASH" data-lines="1">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">1 行</span></div>
+<pre><code class="hljs language-bash">sqlmap -r req.txt --flush-session --batch</code></pre></div>
+<p>这个坑我踩过不止一次，尤其是在反复调 <code>--technique</code> 的时候。</p>
+<h2 id="第四步盲注的调参">第四步：盲注的调参<a class="h-anchor" href="#第四步盲注的调参" aria-label="复制这一节的链接" data-anchor="第四步盲注的调参"></a></h2>
+<p>时间盲注最慢，对参数也最敏感。</p>
+<p><strong>线程必须设 1。</strong></p>
+<div class="code" data-lang="BASH" data-lines="1">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">1 行</span></div>
+<pre><code class="hljs language-bash">sqlmap -r req.txt -p <span class="hljs-built_in">id</span> --technique=T --threads=1 --batch</code></pre></div>
+<p>时间盲注靠的是&quot;响应慢了 N 秒&quot;这个信号。并发请求会让服务器排队，响应时间被调度和网络抖动干扰，判断全乱。表现出来就是一会儿 True 一会儿 False，最后抽出来的数据是错的。</p>
+<p><strong>把延时拉长。</strong> 默认 5 秒，网络不稳的环境里不够明显，加到 8 秒以上：</p>
+<div class="code" data-lang="BASH" data-lines="1">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">1 行</span></div>
+<pre><code class="hljs language-bash">--time-sec=8</code></pre></div>
+<p>代价是更慢，但比抽出一堆错数据强。</p>
+<p><strong>先只取一个值。</strong> 别一上来就 <code>--dump</code> 整张表，先用 <code>--current-db</code> 确认能拿到库名，再往上加：</p>
+<div class="code" data-lang="BASH" data-lines="1">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">1 行</span></div>
+<pre><code class="hljs language-bash">--technique=T --current-db</code></pre></div>
+<h2 id="第五步判断是不是被拦了">第五步：判断是不是被拦了<a class="h-anchor" href="#第五步判断是不是被拦了" aria-label="复制这一节的链接" data-anchor="第五步判断是不是被拦了"></a></h2>
+<p>前面都确认没问题还是不出数据，大概率是 WAF。特征挺明显：</p>
+<ul>
+<li>请求发出去很快就回来了，说明没走到数据库</li>
+<li>响应体和正常请求不一样</li>
+<li>换个 <code>--tamper</code> 突然就通了</li>
+</ul>
+<p>轻量绕过可以先试这个：</p>
+<div class="code" data-lang="BASH" data-lines="1">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">1 行</span></div>
+<pre><code class="hljs language-bash">--tamper=space2comment</code></pre></div>
+<p>tamper 脚本串得越多越慢，而且容易把本来正常的 payload 改坏。能用简单脚本就用简单的。</p>
+<h2 id="常用命令">常用命令<a class="h-anchor" href="#常用命令" aria-label="复制这一节的链接" data-anchor="常用命令"></a></h2>
+<div class="code" data-lang="BASH" data-lines="11">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">11 行</span></div>
+<pre><code class="hljs language-bash"><span class="hljs-comment"># 先摸清楚能不能注入，别急着 dump</span>
+sqlmap -r req.txt --batch --current-db
+
+<span class="hljs-comment"># 盲注：单线程 + 拉长延时</span>
+sqlmap -r req.txt -p <span class="hljs-built_in">id</span> --technique=T --threads=1 --time-sec=8 --batch
+
+<span class="hljs-comment"># 改过参数之后一定要清缓存</span>
+sqlmap -r req.txt --flush-session --batch
+
+<span class="hljs-comment"># 慢但稳</span>
+sqlmap -r req.txt --time-sec=10 --retries=3 --batch</code></pre></div>
+<p>sqlmap 报错的时候，先怀疑自己的请求包，再怀疑目标。我遇到的十次里有七八次是格式、位置或者缓存的问题。真碰到防得严的目标，那才是需要拼技术的时候。</p>
+</div>
+      <aside class="toc" id="toc" aria-label="文章目录"><div class="toc__bar"><span>CONTENTS</span><i id="tocPct">0%</i></div><div class="toc__track"><div class="toc__fill" id="tocFill"></div></div><ul class="toc__list"><li class="lv2"><a href="#第一步先证明不用-sqlmap-也能通" data-t="第一步先证明不用-sqlmap-也能通">第一步：先证明不用 sqlmap 也能通</a></li><li class="lv2"><a href="#第二步确认是不是真注入" data-t="第二步确认是不是真注入">第二步：确认是不是真注入</a></li><li class="lv2"><a href="#第三步请求包本身的问题" data-t="第三步请求包本身的问题">第三步：请求包本身的问题</a></li><li class="lv2"><a href="#第四步盲注的调参" data-t="第四步盲注的调参">第四步：盲注的调参</a></li><li class="lv2"><a href="#第五步判断是不是被拦了" data-t="第五步判断是不是被拦了">第五步：判断是不是被拦了</a></li><li class="lv2"><a href="#常用命令" data-t="常用命令">常用命令</a></li></ul></aside>
+    </div>
+  </article>
+
+  <div class="wrap">
+    <div class="post-foot">
+      <div class="post-foot__tags"><span class="tag"><span>#SQL注入</span></span><span class="tag"><span>#sqlmap</span></span><span class="tag"><span>#盲注</span></span></div>
+      <nav class="pager" aria-label="上下篇"><a class="is-prev" href="2026-09-21-jwt-privesc-chain.html"><span class="pager__dir">← NEWER</span><span class="pager__t">JWT 提权：拿到普通账号之后怎么往上走</span></a><a class="is-next" href="2026-09-19-ctf-postmortem.html"><span class="pager__dir">OLDER →</span><span class="pager__t">打完一场比赛之后该做什么</span></a></nav>
+    </div>
+  </div>
+
+  <section class="related"><div class="wrap"><h2 class="related__t">RELATED <i>相关阅读</i></h2><div class="related__grid"><a class="related__item" href="2026-09-17-web-recon-order.html"><span class="related__cat">渗透测试</span><span class="related__title">拿到授权目标之后，先按这个顺序收集信息</span><span class="related__meta">2026.09.17 · 3 min</span></a><a class="related__item" href="2026-09-22-p5r-design-notes.html"><span class="related__cat">前端</span><span class="related__title">斜切、撕纸边、原生转场：几个能复用的 CSS 效果</span><span class="related__meta">2026.09.22 · 3 min</span></a><a class="related__item" href="2026-09-21-jwt-privesc-chain.html"><span class="related__cat">CTF</span><span class="related__title">JWT 提权：拿到普通账号之后怎么往上走</span><span class="related__meta">2026.09.21 · 2 min</span></a></div></div></section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <div class="foot__big">PHANTOM<br>THIEF LOG</div>
+    <div class="foot__links">
+      <a href="../index.html">首页</a>
+      <a href="../archive.html">学习日志</a>
+      <a href="../tags.html">标签</a>
+      <a href="../about.html">关于</a>
+      <a href="../feed.xml">RSS</a>
+      <a href="https://github.com/phantom726" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="foot__copy">
+      <span>© 2026 <b>PHANTOM</b> · TAKE YOUR HEART</span>
+      <span><a href="../sitemap.xml">SITEMAP</a> · <a href="../feed.json">JSON FEED</a></span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" type="button" aria-label="返回顶部"><span>TOP</span></button>
+
+<!-- ============ 阅读与外观（原生 Popover） ============ -->
+<div class="panel" id="settings" popover>
+  <div class="panel__hd">READING SETUP<em>阅读与外观</em></div>
+
+  <div class="panel__row">
+    <span class="panel__lb">外观</span>
+    <div class="seg" role="group" aria-label="外观模式">
+      <button type="button" data-theme-opt="auto">跟随系统</button>
+      <button type="button" data-theme-opt="dark">深色</button>
+      <button type="button" data-theme-opt="paper">纸白</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">正文字号</span>
+    <div class="seg">
+      <button type="button" data-fs="-1" aria-label="缩小字号">A−</button>
+      <button type="button" data-fs="0" aria-label="恢复默认字号">100%</button>
+      <button type="button" data-fs="1" aria-label="放大字号">A+</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">动效</span>
+    <div class="seg">
+      <button type="button" data-motion-opt="on">全开</button>
+      <button type="button" data-motion-opt="off">减少</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">界面音效</span>
+    <div class="seg">
+      <button type="button" data-sfx-opt="off">关</button>
+      <button type="button" data-sfx-opt="on">开</button>
+    </div>
+  </div>
+
+  <p class="panel__tip">设置存在本机浏览器里，不会上传。按 <kbd>Esc</kbd> 关闭。</p>
+</div>
+
+<!-- ============ 命令面板（原生 dialog，自带焦点管理） ============ -->
+<dialog class="palette" id="palette" aria-label="搜索与快捷命令">
+  <div class="palette__box">
+    <div class="palette__hd">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4.6-4.6" stroke-linecap="round"/></svg>
+      <input id="paletteInput" type="text" placeholder="搜索文章，或输入命令…"
+             autocomplete="off" autocorrect="off" spellcheck="false"
+             role="combobox" aria-expanded="true" aria-controls="paletteList" aria-autocomplete="list">
+      <span class="palette__kbd">ESC</span>
+    </div>
+    <ul class="palette__list" id="paletteList" role="listbox" aria-label="结果"></ul>
+    <div class="palette__ft">
+      <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+      <span><kbd>↵</kbd> 打开</span>
+      <span><kbd>/</kbd> 唤起</span>
+      <span id="paletteCount"></span>
+    </div>
+  </div>
+</dialog>
+<p class="sr-only" id="live" aria-live="polite"></p>
+
+<!-- 转场擦除：仅在不支持原生 View Transitions 的浏览器里启用 -->
+<div class="wipe" id="wipe" aria-hidden="true">
+  <div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div>
+  <div class="wipe__stamp"><span>PHANTOM</span></div>
+</div>
+
+<div class="loader" id="loader">
+  <div class="loader__inner">
+    <div class="loader__bar"><div class="loader__fill"></div></div>
+    <div class="loader__t">NOW <i>LOADING</i></div>
+    <div class="loader__s">PHANTOM THIEF LOG</div>
+  </div>
+</div>
+<noscript><style>
+  .loader{display:none!important}
+  .reveal,.pop,.p5-menu__item,.card-hero{opacity:1!important;transform:none!important}
+  .palette,.panel{display:none!important}
+</style></noscript>
+
+<script src="../assets/js/config.js" defer></script>
+<script src="../assets/js/posts-data.js" defer></script>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

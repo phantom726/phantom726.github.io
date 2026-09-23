@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-root="../" data-theme="dark" data-theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>斜切、撕纸边、原生转场：几个能复用的 CSS 效果 | PHANTOM 怪盗日志</title>
+<meta name="description" content="从《Persona 5 Royal》的界面里拆出来的几个效果——斜切容器、clip-path 撕纸边、多层色块转场。都是纯 CSS，抄走就能用在别的项目上。">
+<meta name="author" content="Phantom">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F1F0EC" media="(prefers-color-scheme: light)">
+<link rel="canonical" href="https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PHANTOM 怪盗日志">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="斜切、撕纸边、原生转场：几个能复用的 CSS 效果 | PHANTOM 怪盗日志">
+<meta property="og:description" content="从《Persona 5 Royal》的界面里拆出来的几个效果——斜切容器、clip-path 撕纸边、多层色块转场。都是纯 CSS，抄走就能用在别的项目上。">
+<meta property="og:url" content="https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html">
+<meta property="og:image" content="https://phantom726.github.io/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PHANTOM 怪盗日志">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="斜切、撕纸边、原生转场：几个能复用的 CSS 效果 | PHANTOM 怪盗日志">
+<meta name="twitter:description" content="从《Persona 5 Royal》的界面里拆出来的几个效果——斜切容器、clip-path 撕纸边、多层色块转场。都是纯 CSS，抄走就能用在别的项目上。">
+<meta name="twitter:image" content="https://phantom726.github.io/assets/img/og.png">
+<meta property="article:published_time" content="2026-09-22T00:00:00+08:00">
+<meta property="article:modified_time" content="2026-09-22T00:00:00+08:00">
+<meta property="article:section" content="前端">
+<meta property="article:tag" content="CSS">
+<meta property="article:tag" content="动效">
+<meta property="article:tag" content="渐进增强">
+
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/img/icon-192.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="PHANTOM 怪盗日志" href="../feed.xml">
+<link rel="alternate" type="application/feed+json" title="PHANTOM 怪盗日志" href="../feed.json">
+<link rel="preload" href="../assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/p5r.css">
+<script>
+/* 首屏状态：在样式生效前定好主题/字号/动效，避免闪一下。
+   注意：预渲染（Speculation Rules）时 storage 可能不可用，全部包在 try 里。 */
+(function(){var h=document.documentElement;try{
+  if(document.prerendering)h.classList.add('skip-loader');
+  if(sessionStorage.getItem('p5-loaded'))h.classList.add('skip-loader');
+  if(sessionStorage.getItem('p5-wipe')==='out')h.classList.add('wipe-on');
+  var t=localStorage.getItem('p5-theme')||'auto';
+  var light=window.matchMedia('(prefers-color-scheme: light)').matches;
+  h.setAttribute('data-theme', t==='auto' ? (light?'paper':'dark') : t);
+  h.setAttribute('data-theme-mode', t);
+  var fs=localStorage.getItem('p5-fs'); if(fs)h.style.setProperty('--fs-scale', fs);
+  if(localStorage.getItem('p5-motion')==='0')h.setAttribute('data-motion','off');
+}catch(e){}})();
+</script>
+<script type="speculationrules">
+{
+  "prefetch": [
+    {
+      "where": {
+        "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/*\\?*" } },
+          { "not": { "selector_matches": "a[target=_blank]" } },
+          { "not": { "selector_matches": "[rel~=nofollow]" } }
+        ]
+      },
+      "eagerness": "moderate"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html#post",
+      "headline": "斜切、撕纸边、原生转场：几个能复用的 CSS 效果",
+      "name": "斜切、撕纸边、原生转场：几个能复用的 CSS 效果",
+      "description": "从《Persona 5 Royal》的界面里拆出来的几个效果——斜切容器、clip-path 撕纸边、多层色块转场。都是纯 CSS，抄走就能用在别的项目上。",
+      "inLanguage": "zh-CN",
+      "datePublished": "2026-09-22",
+      "dateModified": "2026-09-22",
+      "url": "https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Phantom",
+        "url": "https://phantom726.github.io/"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Phantom"
+      },
+      "articleSection": "前端",
+      "keywords": "CSS, 动效, 渐进增强",
+      "wordCount": 1005,
+      "timeRequired": "PT3M",
+      "image": "https://phantom726.github.io/assets/img/og.png"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首页",
+          "item": "https://phantom726.github.io/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "学习日志",
+          "item": "https://phantom726.github.io/archive.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "斜切、撕纸边、原生转场：几个能复用的 CSS 效果",
+          "item": "https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body data-page="post">
+
+<a class="skip" href="#main">跳到正文</a>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="nav__brand" href="../index.html">
+    <span class="nav__mark" aria-hidden="true">P</span>
+    <span class="nav__name">PHANTOM<em>怪盗日志 · TAKE YOUR HEART</em></span>
+  </a>
+  <nav class="nav__menu" id="navMenu" aria-label="主导航">
+    <a href="../index.html">首页<span>HOME</span></a>
+    <a href="../archive.html">学习日志<span>LOGBOOK</span></a>
+    <a href="../tags.html">标签<span>TAGS</span></a>
+    <a href="../about.html">关于<span>ABOUT</span></a>
+  </nav>
+  <div class="nav__side">
+    <button class="icon-btn" id="searchBtn" type="button" aria-label="搜索文章（快捷键 /）" title="搜索　／">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4.6-4.6" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn icon-btn--text" id="settingsBtn" type="button"
+            popovertarget="settings" aria-label="阅读与外观设置" title="阅读与外观">
+      <span aria-hidden="true">Aa</span>
+    </button>
+    <button class="icon-btn nav__burger" id="burger" type="button" aria-label="展开菜单" aria-expanded="false" aria-controls="navMenu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+  <!-- 文章页骨架。外壳（导航 / 页脚 / 面板 / 脚本）在 tools/shell.tpl.html -->
+  <article class="post" data-read="fresh">
+    <header class="post-hero">
+      <div class="wrap post-hero__inner">
+        <nav class="crumb" aria-label="面包屑">
+          <a href="../index.html">首页</a><i>/</i>
+          <a href="../archive.html">学习日志</a><i>/</i>
+          <span>前端</span>
+        </nav>
+        <h1 class="post-title">斜切、撕纸边、原生转场：几个能复用的 CSS 效果</h1>
+        <div class="post-meta">
+          <time datetime="2026-09-22">DATE&nbsp;<b>2026-09-22</b></time>
+          
+          <span>1005 字 · 约 3 分钟读完</span>
+          <span>FILE&nbsp;<b>2026-09-22-p5r-design-notes.md</b></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap post-body">
+      <div class="prose"><p>P5 的界面一眼能认出来，但它其实不复杂。规则砍到只剩三条，然后每条都做到极端：</p>
+<ol>
+<li>只用红、黑、白三种颜色（血条蓝条除外，那是功能性的例外）</li>
+<li>所有矩形都是斜的，菜单、卡片、色块，几乎没有一个是正的</li>
+<li>标题一律粗、斜、挤，而且经常被当作图形元素贴在背景上</li>
+</ol>
+<p>下面这几个效果都是从这套规则里拆出来的，纯 CSS，搬到别的项目上也能用。</p>
+<h2 id="斜切容器">斜切容器<a class="h-anchor" href="#斜切容器" aria-label="复制这一节的链接" data-anchor="斜切容器"></a></h2>
+<p>最省事的办法是给容器加 <code>skewX</code>，同时把子元素反向 skew 回来，这样文字不会被拉斜：</p>
+<div class="code" data-lang="CSS" data-lines="2">
+<div class="code__bar"><span class="code__lang">CSS</span><span class="code__lines">2 行</span></div>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.slant</span> { <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">skewX</span>(-<span class="hljs-number">12deg</span>); }
+<span class="hljs-selector-class">.slant</span> &gt; * { <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">skewX</span>(<span class="hljs-number">12deg</span>); }</code></pre></div>
+<h2 id="从左侧铺开的色块">从左侧铺开的色块<a class="h-anchor" href="#从左侧铺开的色块" aria-label="复制这一节的链接" data-anchor="从左侧铺开的色块"></a></h2>
+<p>悬停时那块颜色从左边长出来，用的是伪元素加 <code>scaleX</code>：</p>
+<div class="code" data-lang="CSS" data-lines="10">
+<div class="code__bar"><span class="code__lang">CSS</span><span class="code__lines">10 行</span></div>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.p5-menu__item</span><span class="hljs-selector-pseudo">::before</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">&#x27;&#x27;</span>;
+  <span class="hljs-attribute">position</span>: absolute; inset: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">background</span>: <span class="hljs-built_in">linear-gradient</span>(<span class="hljs-number">90deg</span>, <span class="hljs-number">#E60012</span>, <span class="hljs-number">#FF1E56</span>);
+  <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">scaleX</span>(<span class="hljs-number">0</span>);
+  <span class="hljs-attribute">transform-origin</span>: left center;
+  <span class="hljs-attribute">transition</span>: transform .<span class="hljs-number">34s</span> <span class="hljs-built_in">cubic-bezier</span>(.<span class="hljs-number">2</span>, .<span class="hljs-number">9</span>, .<span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-attribute">z-index</span>: -<span class="hljs-number">1</span>;
+}
+<span class="hljs-selector-class">.p5-menu__item</span><span class="hljs-selector-pseudo">:hover</span><span class="hljs-selector-pseudo">::before</span> { <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">scaleX</span>(<span class="hljs-number">1</span>); }</code></pre></div>
+<p><code>transform-origin: left center</code> 是关键，它让色块从左边长出来而不是从中间撑开。改一下就能变成从上、从右、从右下角展开。</p>
+<h2 id="撕纸边">撕纸边<a class="h-anchor" href="#撕纸边" aria-label="复制这一节的链接" data-anchor="撕纸边"></a></h2>
+<p>不规则缺口的卡片边缘，用 <code>clip-path</code> 写一串多边形点就能得到，成本极低：</p>
+<div class="code" data-lang="CSS" data-lines="6">
+<div class="code__bar"><span class="code__lang">CSS</span><span class="code__lines">6 行</span></div>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.chamfer</span> {
+  <span class="hljs-attribute">clip-path</span>: <span class="hljs-built_in">polygon</span>(
+    <span class="hljs-number">0</span> <span class="hljs-number">0</span>, <span class="hljs-built_in">calc</span>(<span class="hljs-number">100%</span> - <span class="hljs-number">20px</span>) <span class="hljs-number">0</span>, <span class="hljs-number">100%</span> <span class="hljs-number">20px</span>,
+    <span class="hljs-number">100%</span> <span class="hljs-number">100%</span>, <span class="hljs-number">20px</span> <span class="hljs-number">100%</span>, <span class="hljs-number">0</span> <span class="hljs-built_in">calc</span>(<span class="hljs-number">100%</span> - <span class="hljs-number">20px</span>)
+  );
+}</code></pre></div>
+<p>只切两个对角就是最常见的切角卡片。想做得更&quot;破&quot;一点，多写几个点、把偏移量调得不规则即可。</p>
+<h2 id="网点背景">网点背景<a class="h-anchor" href="#网点背景" aria-label="复制这一节的链接" data-anchor="网点背景"></a></h2>
+<p>那层若隐若现的网点是径向渐变平铺出来的：</p>
+<div class="code" data-lang="CSS" data-lines="5">
+<div class="code__bar"><span class="code__lang">CSS</span><span class="code__lines">5 行</span></div>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.dots</span> {
+  <span class="hljs-attribute">background-image</span>: <span class="hljs-built_in">radial-gradient</span>(circle, <span class="hljs-number">#fff</span> <span class="hljs-number">1.1px</span>, transparent <span class="hljs-number">1.6px</span>);
+  <span class="hljs-attribute">background-size</span>: <span class="hljs-number">9px</span> <span class="hljs-number">9px</span>;
+  <span class="hljs-attribute">opacity</span>: .<span class="hljs-number">28</span>;
+}</code></pre></div>
+<p>再叠一层斜条纹和一层噪点，画面就有印刷品的颗粒感。不干净，但很有劲。</p>
+<h2 id="五条色块扫过屏幕">五条色块扫过屏幕<a class="h-anchor" href="#五条色块扫过屏幕" aria-label="复制这一节的链接" data-anchor="五条色块扫过屏幕"></a></h2>
+<p>点击链接时五条斜色块依次扫过，实现是五个不同延迟的 <code>div</code>：</p>
+<div class="code" data-lang="CSS" data-lines="8">
+<div class="code__bar"><span class="code__lang">CSS</span><span class="code__lines">8 行</span></div>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.wipe__p</span> {
+  <span class="hljs-attribute">position</span>: absolute; <span class="hljs-attribute">width</span>: <span class="hljs-number">44%</span>; <span class="hljs-attribute">height</span>: <span class="hljs-number">128%</span>;
+  <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">translateX</span>(-<span class="hljs-number">190%</span>) <span class="hljs-built_in">skewX</span>(-<span class="hljs-number">13deg</span>);
+  <span class="hljs-attribute">transition</span>: transform .<span class="hljs-number">42s</span> <span class="hljs-built_in">cubic-bezier</span>(.<span class="hljs-number">2</span>, .<span class="hljs-number">9</span>, .<span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
+}
+<span class="hljs-selector-class">.wipe__p</span><span class="hljs-selector-pseudo">:nth-child</span>(<span class="hljs-number">1</span>) { <span class="hljs-attribute">background</span>: <span class="hljs-number">#0B0B0D</span>; <span class="hljs-attribute">transition-delay</span>: .<span class="hljs-number">00s</span>; }
+<span class="hljs-selector-class">.wipe__p</span><span class="hljs-selector-pseudo">:nth-child</span>(<span class="hljs-number">2</span>) { <span class="hljs-attribute">background</span>: <span class="hljs-number">#E60012</span>; <span class="hljs-attribute">transition-delay</span>: .<span class="hljs-number">055s</span>; }
+<span class="hljs-selector-class">.wipe__p</span><span class="hljs-selector-pseudo">:nth-child</span>(<span class="hljs-number">3</span>) { <span class="hljs-attribute">background</span>: <span class="hljs-number">#0B0B0D</span>; <span class="hljs-attribute">transition-delay</span>: .<span class="hljs-number">11s</span>; }</code></pre></div>
+<p>延迟每条递增 55ms，就有了&quot;甩过去&quot;的视觉残留。整套转场控制 400ms 内结束，不会拖慢手感。</p>
+<h2 id="换成浏览器原生的转场">换成浏览器原生的转场<a class="h-anchor" href="#换成浏览器原生的转场" aria-label="复制这一节的链接" data-anchor="换成浏览器原生的转场"></a></h2>
+<p>上面那套是兜底版本。现在主流浏览器支持跨文档 View Transitions，斜向擦除可以直接写成 CSS 动画，一行 JS 都不需要：</p>
+<div class="code" data-lang="CSS" data-title="assets/css/p5r.css" data-lines="19">
+<div class="code__bar"><span class="code__lang">CSS</span><span class="code__file">assets/css/p5r.css</span><span class="code__lines">19 行</span></div>
+<pre><code class="hljs language-css"><span class="hljs-keyword">@view-transition</span> { navigation: auto; }
+
+<span class="hljs-comment">/* 旧页沿斜边向左抽走，新页从右侧同一条斜线揭开；
+   中间垫一层红，任何缝隙都变成有意为之的设计 */</span>
+::view-transition { <span class="hljs-attribute">background-color</span>: <span class="hljs-built_in">var</span>(--red); }
+::<span class="hljs-built_in">view-transition-old</span>(root) {
+  <span class="hljs-attribute">animation</span>: p5-vt-out .<span class="hljs-number">46s</span> <span class="hljs-built_in">cubic-bezier</span>(.<span class="hljs-number">7</span>, <span class="hljs-number">0</span>, .<span class="hljs-number">28</span>, <span class="hljs-number">1</span>) both;
+}
+::<span class="hljs-built_in">view-transition-new</span>(root) {
+  <span class="hljs-attribute">animation</span>: p5-vt-in .<span class="hljs-number">46s</span> <span class="hljs-built_in">cubic-bezier</span>(.<span class="hljs-number">7</span>, <span class="hljs-number">0</span>, .<span class="hljs-number">28</span>, <span class="hljs-number">1</span>) both;
+}
+<span class="hljs-keyword">@keyframes</span> p5-vt-out {
+  <span class="hljs-selector-tag">from</span> { <span class="hljs-attribute">clip-path</span>: <span class="hljs-built_in">polygon</span>(-<span class="hljs-number">30%</span> <span class="hljs-number">0</span>, <span class="hljs-number">130%</span> <span class="hljs-number">0</span>, <span class="hljs-number">130%</span> <span class="hljs-number">100%</span>, -<span class="hljs-number">30%</span> <span class="hljs-number">100%</span>); }
+  <span class="hljs-selector-tag">to</span>   { <span class="hljs-attribute">clip-path</span>: <span class="hljs-built_in">polygon</span>(-<span class="hljs-number">30%</span> <span class="hljs-number">0</span>, -<span class="hljs-number">20%</span> <span class="hljs-number">0</span>, -<span class="hljs-number">42%</span> <span class="hljs-number">100%</span>, -<span class="hljs-number">30%</span> <span class="hljs-number">100%</span>); }
+}
+<span class="hljs-keyword">@keyframes</span> p5-vt-in {
+  <span class="hljs-selector-tag">from</span> { <span class="hljs-attribute">clip-path</span>: <span class="hljs-built_in">polygon</span>(<span class="hljs-number">125%</span> <span class="hljs-number">0</span>, <span class="hljs-number">125%</span> <span class="hljs-number">0</span>, <span class="hljs-number">105%</span> <span class="hljs-number">100%</span>, <span class="hljs-number">105%</span> <span class="hljs-number">100%</span>); }
+  <span class="hljs-selector-tag">to</span>   { <span class="hljs-attribute">clip-path</span>: <span class="hljs-built_in">polygon</span>(-<span class="hljs-number">10%</span> <span class="hljs-number">0</span>, <span class="hljs-number">125%</span> <span class="hljs-number">0</span>, <span class="hljs-number">105%</span> <span class="hljs-number">100%</span>, -<span class="hljs-number">30%</span> <span class="hljs-number">100%</span>); }
+}</code></pre></div>
+<p>好处不只是更现代。旧方案要靠 JS 拦点击、播动画、再 <code>location.href</code>，硬拖 400ms 才开始加载；原生转场跑在合成器线程上，页面立刻开始加载，动画和加载是并行的。</p>
+<p>要判断浏览器支不支持，别用 <code>&#39;startViewTransition&#39; in document</code>，那只代表同文档转场。正确做法是看 <code>@view-transition</code> 这个 at-rule 有没有被 CSS 解析器留下：</p>
+<div class="code" data-lang="JAVASCRIPT" data-lines="11">
+<div class="code__bar"><span class="code__lang">JAVASCRIPT</span><span class="code__lines">11 行</span></div>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">var</span> <span class="hljs-variable constant_">HAS_VT</span> = (<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">if</span> (!(<span class="hljs-string">&#x27;startViewTransition&#x27;</span> <span class="hljs-keyword">in</span> <span class="hljs-variable language_">document</span>)) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">var</span> s = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;style&#x27;</span>);
+    s.<span class="hljs-property">textContent</span> = <span class="hljs-string">&#x27;@view-transition { navigation: auto; }&#x27;</span>;
+    <span class="hljs-variable language_">document</span>.<span class="hljs-property">head</span>.<span class="hljs-title function_">appendChild</span>(s);
+    <span class="hljs-keyword">var</span> ok = !!(s.<span class="hljs-property">sheet</span> &amp;&amp; s.<span class="hljs-property">sheet</span>.<span class="hljs-property">cssRules</span>.<span class="hljs-property">length</span>);  <span class="hljs-comment">// 不支持就是 0 条</span>
+    <span class="hljs-variable language_">document</span>.<span class="hljs-property">head</span>.<span class="hljs-title function_">removeChild</span>(s);
+    <span class="hljs-keyword">return</span> ok;
+  } <span class="hljs-keyword">catch</span> (e) { <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; }
+})();</code></pre></div>
+<h2 id="粗斜体标题">粗斜体标题<a class="h-anchor" href="#粗斜体标题" aria-label="复制这一节的链接" data-anchor="粗斜体标题"></a></h2>
+<p>Anton 这种被压得很窄很挤的字体（只占 18KB），天然有海报字的感觉。但中文没有对应的免费粗斜体，做法是用 900 字重加合成斜体顶上：</p>
+<div class="code" data-lang="CSS" data-lines="5">
+<div class="code__bar"><span class="code__lang">CSS</span><span class="code__lines">5 行</span></div>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.dsp-cn</span> {
+  <span class="hljs-attribute">font-weight</span>: <span class="hljs-number">900</span>;
+  <span class="hljs-attribute">font-style</span>: italic;   <span class="hljs-comment">/* 浏览器合成倾斜 */</span>
+  <span class="hljs-attribute">letter-spacing</span>: .<span class="hljs-number">01em</span>;
+}</code></pre></div>
+<p>实测在 Windows（微软雅黑）和 macOS（苹方）上都能得到足够接近的效果。</p>
+<h2 id="一个便宜的渐进增强技巧">一个便宜的渐进增强技巧<a class="h-anchor" href="#一个便宜的渐进增强技巧" aria-label="复制这一节的链接" data-anchor="一个便宜的渐进增强技巧"></a></h2>
+<p>CSS 里同一条声明写两遍，后一条不合法就自动保留前一条。用这个可以白拿一层降级：</p>
+<div class="code" data-lang="CSS" data-lines="6">
+<div class="code__bar"><span class="code__lang">CSS</span><span class="code__lines">6 行</span></div>
+<pre><code class="hljs language-css"><span class="hljs-selector-pseudo">:root</span> {
+  <span class="hljs-attr">--bg</span>: <span class="hljs-number">#0B0B0D</span>;                      <span class="hljs-comment">/* 兜底 */</span>
+  <span class="hljs-attr">--bg</span>: <span class="hljs-built_in">light-dark</span>(<span class="hljs-number">#F1F0EC</span>, <span class="hljs-number">#0B0B0D</span>); <span class="hljs-comment">/* 支持的浏览器用这条 */</span>
+}
+<span class="hljs-selector-tag">html</span><span class="hljs-selector-attr">[data-theme=<span class="hljs-string">&#x27;dark&#x27;</span>]</span>  { <span class="hljs-attribute">color</span>-scheme: dark; }
+<span class="hljs-selector-tag">html</span><span class="hljs-selector-attr">[data-theme=<span class="hljs-string">&#x27;paper&#x27;</span>]</span> { <span class="hljs-attribute">color</span>-scheme: light; }</code></pre></div>
+<p><code>light-dark()</code> 一行就把深浅两套配色塞进了同一个变量，老浏览器读到不认识的函数会忽略这条，用回上面的 hex。</p>
+<h2 id="其他用到的现代特性">其他用到的现代特性<a class="h-anchor" href="#其他用到的现代特性" aria-label="复制这一节的链接" data-anchor="其他用到的现代特性"></a></h2>
+<p>每一项都留了退路，老浏览器只是少一点动效，不会坏：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>能力</th>
+<th>用在哪</th>
+<th>不支持时</th>
+</tr>
+</thead><tbody><tr>
+<td>View Transitions</td>
+<td>页面切换的斜向擦除</td>
+<td>回退到 JS 版</td>
+</tr>
+<tr>
+<td>Speculation Rules</td>
+<td>链接悬停即预取下一页</td>
+<td>无影响，只是慢一点</td>
+</tr>
+<tr>
+<td><code>&lt;dialog&gt;</code></td>
+<td>搜索面板，自带焦点管理</td>
+<td>退化成 <code>open</code> 属性</td>
+</tr>
+<tr>
+<td>Popover API</td>
+<td>设置面板，点外面自动关</td>
+<td>退化成普通固定面板</td>
+</tr>
+<tr>
+<td>CSS 锚点定位</td>
+<td>面板贴住触发按钮</td>
+<td>回退到固定坐标</td>
+</tr>
+<tr>
+<td>滚动驱动动画</td>
+<td>顶部阅读进度条</td>
+<td>回退到 JS 监听 <code>scroll</code></td>
+</tr>
+<tr>
+<td><code>light-dark()</code></td>
+<td>一套变量管两种主题</td>
+<td>前面先写 hex 兜底</td>
+</tr>
+<tr>
+<td>容器查询</td>
+<td>卡片网格按容器宽度自适应</td>
+<td>回退到媒体查询</td>
+</tr>
+<tr>
+<td><code>@starting-style</code></td>
+<td>面板、弹层的入场</td>
+<td>直接出现</td>
+</tr>
+<tr>
+<td><code>content-visibility</code></td>
+<td>屏幕外卡片跳过渲染</td>
+<td>无影响</td>
+</tr>
+</tbody></table></div>
+<p>这些特性单独看都不难，麻烦的是每加一个都要想清楚不支持的时候会怎样。逐个补退路，比最后一起返工省事得多。</p>
+</div>
+      <aside class="toc" id="toc" aria-label="文章目录"><div class="toc__bar"><span>CONTENTS</span><i id="tocPct">0%</i></div><div class="toc__track"><div class="toc__fill" id="tocFill"></div></div><ul class="toc__list"><li class="lv2"><a href="#斜切容器" data-t="斜切容器">斜切容器</a></li><li class="lv2"><a href="#从左侧铺开的色块" data-t="从左侧铺开的色块">从左侧铺开的色块</a></li><li class="lv2"><a href="#撕纸边" data-t="撕纸边">撕纸边</a></li><li class="lv2"><a href="#网点背景" data-t="网点背景">网点背景</a></li><li class="lv2"><a href="#五条色块扫过屏幕" data-t="五条色块扫过屏幕">五条色块扫过屏幕</a></li><li class="lv2"><a href="#换成浏览器原生的转场" data-t="换成浏览器原生的转场">换成浏览器原生的转场</a></li><li class="lv2"><a href="#粗斜体标题" data-t="粗斜体标题">粗斜体标题</a></li><li class="lv2"><a href="#一个便宜的渐进增强技巧" data-t="一个便宜的渐进增强技巧">一个便宜的渐进增强技巧</a></li><li class="lv2"><a href="#其他用到的现代特性" data-t="其他用到的现代特性">其他用到的现代特性</a></li></ul></aside>
+    </div>
+  </article>
+
+  <div class="wrap">
+    <div class="post-foot">
+      <div class="post-foot__tags"><span class="tag"><span>#CSS</span></span><span class="tag"><span>#动效</span></span><span class="tag"><span>#渐进增强</span></span></div>
+      <nav class="pager" aria-label="上下篇"><span class="pager__box is-prev is-empty"><span class="pager__dir">← NEWER</span><span class="pager__t">— 没有了 —</span></span><a class="is-next" href="2026-09-21-jwt-privesc-chain.html"><span class="pager__dir">OLDER →</span><span class="pager__t">JWT 提权：拿到普通账号之后怎么往上走</span></a></nav>
+    </div>
+  </div>
+
+  <section class="related"><div class="wrap"><h2 class="related__t">RELATED <i>相关阅读</i></h2><div class="related__grid"><a class="related__item" href="2026-09-21-jwt-privesc-chain.html"><span class="related__cat">CTF</span><span class="related__title">JWT 提权：拿到普通账号之后怎么往上走</span><span class="related__meta">2026.09.21 · 2 min</span></a><a class="related__item" href="2026-09-20-sqlmap-blind-tuning.html"><span class="related__cat">渗透测试</span><span class="related__title">sqlmap 抽不出数据时，按这个顺序排查</span><span class="related__meta">2026.09.20 · 2 min</span></a><a class="related__item" href="2026-09-19-ctf-postmortem.html"><span class="related__cat">CTF</span><span class="related__title">打完一场比赛之后该做什么</span><span class="related__meta">2026.09.19 · 3 min</span></a></div></div></section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <div class="foot__big">PHANTOM<br>THIEF LOG</div>
+    <div class="foot__links">
+      <a href="../index.html">首页</a>
+      <a href="../archive.html">学习日志</a>
+      <a href="../tags.html">标签</a>
+      <a href="../about.html">关于</a>
+      <a href="../feed.xml">RSS</a>
+      <a href="https://github.com/phantom726" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="foot__copy">
+      <span>© 2026 <b>PHANTOM</b> · TAKE YOUR HEART</span>
+      <span><a href="../sitemap.xml">SITEMAP</a> · <a href="../feed.json">JSON FEED</a></span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" type="button" aria-label="返回顶部"><span>TOP</span></button>
+
+<!-- ============ 阅读与外观（原生 Popover） ============ -->
+<div class="panel" id="settings" popover>
+  <div class="panel__hd">READING SETUP<em>阅读与外观</em></div>
+
+  <div class="panel__row">
+    <span class="panel__lb">外观</span>
+    <div class="seg" role="group" aria-label="外观模式">
+      <button type="button" data-theme-opt="auto">跟随系统</button>
+      <button type="button" data-theme-opt="dark">深色</button>
+      <button type="button" data-theme-opt="paper">纸白</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">正文字号</span>
+    <div class="seg">
+      <button type="button" data-fs="-1" aria-label="缩小字号">A−</button>
+      <button type="button" data-fs="0" aria-label="恢复默认字号">100%</button>
+      <button type="button" data-fs="1" aria-label="放大字号">A+</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">动效</span>
+    <div class="seg">
+      <button type="button" data-motion-opt="on">全开</button>
+      <button type="button" data-motion-opt="off">减少</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">界面音效</span>
+    <div class="seg">
+      <button type="button" data-sfx-opt="off">关</button>
+      <button type="button" data-sfx-opt="on">开</button>
+    </div>
+  </div>
+
+  <p class="panel__tip">设置存在本机浏览器里，不会上传。按 <kbd>Esc</kbd> 关闭。</p>
+</div>
+
+<!-- ============ 命令面板（原生 dialog，自带焦点管理） ============ -->
+<dialog class="palette" id="palette" aria-label="搜索与快捷命令">
+  <div class="palette__box">
+    <div class="palette__hd">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4.6-4.6" stroke-linecap="round"/></svg>
+      <input id="paletteInput" type="text" placeholder="搜索文章，或输入命令…"
+             autocomplete="off" autocorrect="off" spellcheck="false"
+             role="combobox" aria-expanded="true" aria-controls="paletteList" aria-autocomplete="list">
+      <span class="palette__kbd">ESC</span>
+    </div>
+    <ul class="palette__list" id="paletteList" role="listbox" aria-label="结果"></ul>
+    <div class="palette__ft">
+      <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+      <span><kbd>↵</kbd> 打开</span>
+      <span><kbd>/</kbd> 唤起</span>
+      <span id="paletteCount"></span>
+    </div>
+  </div>
+</dialog>
+<p class="sr-only" id="live" aria-live="polite"></p>
+
+<!-- 转场擦除：仅在不支持原生 View Transitions 的浏览器里启用 -->
+<div class="wipe" id="wipe" aria-hidden="true">
+  <div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div>
+  <div class="wipe__stamp"><span>PHANTOM</span></div>
+</div>
+
+<div class="loader" id="loader">
+  <div class="loader__inner">
+    <div class="loader__bar"><div class="loader__fill"></div></div>
+    <div class="loader__t">NOW <i>LOADING</i></div>
+    <div class="loader__s">PHANTOM THIEF LOG</div>
+  </div>
+</div>
+<noscript><style>
+  .loader{display:none!important}
+  .reveal,.pop,.p5-menu__item,.card-hero{opacity:1!important;transform:none!important}
+  .palette,.panel{display:none!important}
+</style></noscript>
+
+<script src="../assets/js/config.js" defer></script>
+<script src="../assets/js/posts-data.js" defer></script>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

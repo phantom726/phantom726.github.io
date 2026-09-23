@@ -1,73 +1,104 @@
 # PHANTOM // 怪盗日志
 
-一个《Persona 5 Royal》UI 风格的静态博客。红、黑、白三色纪律，斜切色块，粗斜体标题，页面切换时一道斜条纹把整屏擦走。
+个人技术博客。纯静态，跑在 GitHub Pages 上，红黑白三色的《Persona 5 Royal》风格——斜切色块、撕纸边、页面转场擦除。
 
-**零构建依赖、零外部请求**——Markdown 解析器和代码高亮都是本地副本，整站在国内网络下打开速度稳定。
-
-- **线上地址**：https://phantom726.github.io/phantom.github.io/
-- 生成方式：自写的 `tools/blog.js`（纯 Node，无需 npm install）
-
-> ⚠️ **关于这个网址多出来的一层路径**
->
-> 用户主页仓库必须叫 **`<用户名>.github.io`**。你的 GitHub 用户名是 `phantom726`，
-> 但仓库名是 `phantom.github.io`（少了 `726`）——两个名字对不上，所以它被当成**项目站点**，
-> 网址就是 `https://phantom726.github.io/phantom.github.io/`。
->
-> 想要干净的 `https://phantom726.github.io/`，把仓库改名成 `phantom726.github.io` 即可
-> （Settings → General → Repository name → Rename），改名后 GitHub 会自动把老地址重定向过去。
-> 改完记得把 `tools/blog.js` 里的 `BASE` 改成 `'/'` 再重新构建，并更新本地 remote。详见第四节。
+- **线上地址**：https://phantom726.github.io/
+- **仓库**：https://github.com/phantom726/phantom726.github.io
+- **构建方式**：自写的 Node 脚本，零依赖，不需要 `npm install`
 
 ---
 
-## 一、本地预览
+## 一、目录结构
+
+想改东西，先看这张表。
 
 ```
-node tools/blog.js serve
+.
+├── docs/                    ← 站点本体，全部是构建产物，别手改
+│   ├── index.html             首页
+│   ├── archive.html           学习日志
+│   ├── tags.html              标签
+│   ├── about.html             关于
+│   ├── 404.html
+│   ├── posts/*.html           文章页面
+│   ├── assets/                CSS / JS / 图片 / 字体 / 第三方库
+│   ├── feed.xml  feed.json    RSS 与 JSON Feed
+│   ├── sitemap.xml  robots.txt
+│   └── favicon.svg  manifest.webmanifest  .nojekyll
+│
+├── src/                     ← 源材料，改动都在这里
+│   ├── posts/*.md             文章（Markdown + front matter）
+│   ├── pages/*.html           页面片段
+│   ├── templates/             外壳与文章模板
+│   └── tools/                 blog.js 构建 / check.js 自检 / make-images.py 出图
+│
+├── README.md
+└── .gitignore
 ```
 
-然后打开 http://localhost:4000/
+GitHub Pages 从 **`docs/`** 发布（不是根目录）。
 
-> 请务必用这种方式预览，**不要直接双击 `.html` 文件**。站内用的是相对路径，直接打开会出现链接错位。
+`assets/` 是唯一的例外：CSS 和 JS 是手写的、浏览器直接取用，没有构建步骤，所以它们放在 `docs/assets/` 里直接改。
 
-想换端口：`node tools/blog.js serve 8080`
+### 各类改动对应到哪个文件
+
+| 想改什么 | 动哪个文件 |
+| --- | --- |
+| 文章内容 | `src/posts/*.md` |
+| 导航栏、页脚、搜索面板、设置面板 | `src/templates/shell.tpl.html` |
+| 文章页的排版骨架 | `src/templates/post.tpl.html` |
+| 首页 / 学习日志 / 标签 / 关于 / 404 的正文 | `src/pages/*.html` |
+| 样式、配色 | `docs/assets/css/p5r.css` |
+| 交互行为 | `docs/assets/js/site.js` |
+| 运行参数（建站日期、首页篇数） | `docs/assets/js/config.js` |
+| 生成逻辑 | `src/tools/blog.js` |
+
+改完 `src/` 里的东西要跑一次构建；改 `docs/assets/` 里的刷新就行。
 
 ---
 
-## 二、发一篇新文章
+## 二、本地预览
+
+```bash
+node src/tools/blog.js serve
+```
+
+默认 4000 端口，也可以指定：`node src/tools/blog.js serve 8080`。
+
+> 一定用这个方式预览，不要直接双击 `.html`。站内用的是相对路径，直接打开会有大量链接错位。
+
+---
+
+## 三、发一篇新文章
 
 ### 1. 建草稿
 
-```
-node tools/blog.js new "文章标题" --cat CTF --tags SQL注入,靶场
+```bash
+node src/tools/blog.js new "文章标题" --cat CTF --tags SQL注入,靶场
 ```
 
-会在 `posts/` 下生成 `日期-标题.md`，front matter 和正文模板都已经填好，直接开写。
-
-`--cat` 是分类，`--tags` 是标签（英文逗号分隔，**不要加空格**）。两个都可以省略，默认分类是「随笔」。
+会在 `src/posts/` 下生成 `日期-标题.md`，front matter 已填好，直接开写。标签用逗号分隔，不要加空格。
 
 ### 2. 构建
 
-```
-node tools/blog.js
+```bash
+node src/tools/blog.js
 ```
 
-生成的产物：
-
-| 输出 | 内容 |
+| 动作 | 输出 |
 | --- | --- |
-| `posts/你的文章.html` | 文章页面（目录、锚点、相关阅读都在构建期算好） |
-| `assets/js/posts-data.js` | 全站文章索引（首页、学习日志、标签页、搜索都靠它） |
-| `feed.xml` / `feed.json` | RSS 全文 + JSON Feed 1.1 |
-| `sitemap.xml` / `robots.txt` | 站点地图 |
-| 根目录 5 个 `.html` | 首页 / 学习日志 / 标签 / 关于 / 404 |
+| Markdown 渲染成 HTML | `docs/posts/文章.html` |
+| 生成全站索引 | `docs/assets/js/posts-data.js` |
+| 生成页面 | `docs/index.html` 等 |
+| 生成订阅与地图 | `docs/feed.xml` `docs/feed.json` `docs/sitemap.xml` |
 
 ### 3. 自检
 
-```
-node tools/check.js
+```bash
+node src/tools/check.js
 ```
 
-检查本地链接、残留占位符、文章索引一致性、canonical/JSON-LD/og:image 是否每页都有、文章页部件是否齐全、有没有意外引入外部资源、图片体积。
+九项检查：本地链接、占位符、索引一致性、静态资源、SEO 覆盖、JSON-LD、文章页部件、外部依赖、图片体积。有问题的会直接列出来。
 
 ### 4. 提交
 
@@ -77,135 +108,108 @@ git commit -m "post: 文章标题"
 git push
 ```
 
-GitHub Pages 会在 1~2 分钟内自动重新发布。
+推完等一两分钟，Pages 会自己重新发布。
 
 ---
 
-## 三、写文章时的语法
+## 四、front matter
 
-### front matter
+写在文件最上面，前后各三个短横线：
 
 ```yaml
 ---
 title: 文章标题
-date: 2026-09-22
-updated: 2026-09-25      # 可选，填了才会在标题下方显示"更新于"
+date: 2026-09-21
+updated: 2026-09-22
 category: CTF
-tags: [CTF, 复盘, 模板]
-excerpt: 一到两句话的摘要，会用在首页卡片、搜索结果和社交分享。
-draft: false             # true 则本次构建跳过
+tags: [SQL注入, 靶场]
+excerpt: 首页卡片和搜索结果里显示的摘要，建议 60 字以内。
+draft: false
+pinned: false
 ---
 ```
 
-### 代码块可以带标签和行高亮
+- `date` 决定排序，格式必须是 `YYYY-MM-DD`
+- `updated` 可选，填了会在文章页多显示一个「更新于」
+- `draft: true` 的文章不会出现在任何列表里，构建时跳过
+- `pinned` 只影响首页特色卡片的样式，不影响排序
+
+---
+
+## 五、文章里的语法
+
+### 代码块
+
+第一行写上语言，才有高亮，左上角也会显示语言名：
 
 ````markdown
-```bash title="scan.sh" wrap {3-5}
-nmap -sV -p- 10.10.10.10
+```bash
+sqlmap -r req.txt --batch
+```
+````
+
+代码块还支持几个开关：
+
+````markdown
+```bash title="src/tools/blog.js" {3-5}
+第一行
+第二行
+这三行会被高亮
 ```
 ````
 
 | 写法 | 效果 |
 | --- | --- |
-| `title="scan.sh"` | 代码块左侧显示文件名（`file=` 同义） |
-| `wrap` | 默认不折行 + 横向滚动，加这个改成自动折行 |
-| `{3-5}` 或 `{1,4,7}` | 高亮指定行（带左侧红条） |
-| 语言写 `diff` | `+` / `-` 行自动着色 |
-| 超过 26 行 | 自动折叠，底部出现「展开全部 N 行」 |
+| `title="文件名"` | 顶部信息条显示文件名 |
+| `{3-5}` `{2,7}` | 高亮指定行 |
+| 语言写 `diff` | 按增删着色 |
+| 超过 26 行 | 自动折叠，可展开 |
 
-代码块头部还会显示行数，右边有 WRAP / COPY 按钮。
+支持的语言（常见的）：`bash` `shell` `python` `javascript` `typescript` `c` `cpp` `java` `php` `sql` `http` `json` `yaml` `xml` `html` `css` `nginx` `dockerfile` `powershell` `go` `rust`。不写也不报错，程序会猜，只是可能猜错。
 
-### 支持的代码语言
+### 站内链接
 
-`bash` `shell` `python` `javascript` `typescript` `json` `yaml` `xml` `html` `css` `scss` `less`
-`c` `cpp` `csharp` `java` `go` `rust` `ruby` `php` `perl` `lua` `swift` `kotlin` `objectivec` `vbnet` `r`
-`sql` `diff` `makefile` `ini` `graphql` `markdown` `plaintext` `wasm`
-**外加**：`http` `nginx` `dockerfile` `apache` `powershell`（这几个是额外下载的，一般人用不上）
-
-没写语言或语言不认识时，会交给程序自动猜。
-
-### 站内链接写根路径
-
-文章页在 `posts/` 下面一层，写 `../index.html` 很烦，所以直接写 `/index.html`，构建时会自动补成 `../index.html`。
+文章页在 `docs/posts/` 下一层，写 `../index.html` 很烦，所以直接写根路径，构建时会自动补：
 
 ```markdown
 看 [学习日志](/archive.html)，或者回到 [首页](/index.html)。
 ```
 
+外部链接会自动带 `target="_blank"` 和 `rel="noopener"`。
+
 ---
 
-## 四、部署
+## 六、部署
 
-> **已上线**（2026-09-22）：推送到 `phantom726/phantom.github.io`，Pages 已开启，
-> `pages build and deployment` 构建成功 ⇒ 站点在
-> **https://phantom726.github.io/phantom.github.io/**
-
-### 已经配好的状态
+### 当前状态
 
 | 项目 | 值 |
 | --- | --- |
-| 远程 | `origin` → `git@github.com:phantom726/phantom.github.io.git`（**SSH**） |
+| 远程 | `origin` → `git@github.com:phantom726/phantom726.github.io.git`（SSH） |
 | 分支 | `main` |
-| 身份 | 已全局配置（`phantom` / `3226607284@qq.com`） |
-| 认证方式 | **SSH key**（`~/.ssh/id_ed25519`，已登记到 GitHub） |
-| Pages | Source = `Deploy from a branch`，`main` / `/ (root)` |
+| 发布目录 | `docs/` |
+| 认证 | SSH key（`~/.ssh/id_ed25519`，已登记到 GitHub） |
 
-**用 SSH 不是随便选的**：这台机器直连 `github.com:443` 不通（要走本机 `127.0.0.1:10808` 的 SOCKS5 代理），
-但 **22 端口直连是通的**，且 SSH key 早就配好并登记过了 ⇒ **走 SSH 推送完全不需要代理、不需要 token**。
+用 SSH 不是随便选的：这台机器直连 `github.com:443` 不通（要走本机 `127.0.0.1:10808` 的 SOCKS5 代理），但 **22 端口直连是通的**，SSH key 也早就配好了。走 SSH 推送完全不需要代理、不需要 token。
 
-### ⚠️ 把网址变成干净的根域名（推荐做一次）
+### GitHub Pages 设置
 
-现在的网址是 `https://phantom726.github.io/phantom.github.io/`，多一层是因为
-**仓库名（`phantom.github.io`）和用户名（`phantom726`）对不上**。
+仓库改名成 `phantom726.github.io` 之后，站点地址变成了根域名 **https://phantom726.github.io/**，但发布目录要跟着改一次：
 
-想改成 `https://phantom726.github.io/`，只需把仓库改名：
+1. 打开 https://github.com/phantom726/phantom726.github.io/settings/pages
+2. **Source** 选 `Deploy from a branch`
+3. **Branch** 选 `main`，目录选 **`/docs`**（不是 `/ (root)`）
+4. **Save**，等一两分钟
 
-1. 打开 https://github.com/phantom726/phantom.github.io/settings
-2. **Repository name** 改成 `phantom726.github.io` → **Rename**
-3. GitHub 会自动把老地址 301 重定向到新地址，不会产生死链
-
-然后本地要跟着改两处：
-
-```bash
-# ① 远程地址跟着改
-git remote set-url origin git@github.com:phantom726/phantom726.github.io.git
-git remote -v                       # 确认变了
-
-# ② 把 tools/blog.js 里的 BASE 改成 '/'
-#    const BASE = '/phantom.github.io/';   →   const BASE = '/';
-node tools/blog.js && node tools/check.js
-git add -A && git commit -m "chore: 仓库改名，站点基路径改为根目录" && git push
-```
-
-**只改仓库名不改 `BASE`** 的话，站点本身照样能打开（站内链接都是相对路径），
-但 canonical / og:image / RSS 里的绝对地址会指错，分享出去预览图会挂——所以两处要一起改。
-
-### 首次部署的完整流程（重建时参考）
-
-```bash
-# 进入项目根目录（有 index.html 的那一层）
-cd /path/to/phantom.github.io
-
-git init
-git branch -M main
-git add -A
-git commit -m "feat: P5R 风格博客上线"
-git remote add origin git@github.com:phantom726/phantom.github.io.git
-git push -u origin main
-```
-
-**预期输出**：最后是 `branch 'main' set up to track 'origin/main'.` 和 `* [new branch] main -> main`。
-
-开启 Pages：仓库 **Settings → Pages** → Source 选 **`Deploy from a branch`**（⚠️ 千万别选 `GitHub Actions`，
-本站没有 workflow，选了会一直 404）→ Branch 选 `main` / `/ (root)` → **Save**。
+> 目录选错站点会 404。因为构建产物都在 `docs/`，根目录只剩源码。
 
 ### 日常更新
 
 ```bash
-node tools/blog.js          # 构建
-node tools/check.js         # 自检
+node src/tools/blog.js     # 构建
+node src/tools/check.js    # 自检
 git add -A
-git commit -m "post: 文章标题"
+git commit -m "post: 标题"
 git push
 ```
 
@@ -216,172 +220,79 @@ git ls-remote origin main   # 远端 main 的 hash
 git rev-parse main          # 本地 main 的 hash
 ```
 
-两个 hash 一样 = 推成功了。**push 完还要等 1~2 分钟** Pages 重新构建。
+两个一样就是成功了。
 
-### 开启 GitHub Pages（只需一次）
-
-1. 打开 https://github.com/phantom726/phantom.github.io/settings/pages
-2. **Source** 选 `Deploy from a branch`
-3. **Branch** 选 `main`，目录选 `/ (root)`，点 **Save**
-4. 等 1~2 分钟，访问 https://phantom726.github.io/
-
-因为仓库名正好是 `phantom.github.io`，属于**用户主页仓库**，所以地址就是根域名，不需要加子路径。
-
-### 如果哪天要改用 HTTPS（不推荐，仅备查）
-
-这台机器直连 GitHub 不通，必须给 git 配代理。只给 github 开、不动全局（否则会误伤内网 Gitea）：
+### 首次部署（重建时参考）
 
 ```bash
-git config --global http.https://github.com.proxy socks5://127.0.0.1:10808
-git ls-remote https://github.com/phantom726/phantom.github.io.git   # 验证网络层
+git init
+git branch -M main
+git add -A
+git commit -m "feat: 建站"
+git remote add origin git@github.com:phantom726/phantom726.github.io.git
+git push -u origin main
 ```
-
-GitHub 已禁用密码认证，HTTPS 方式必须用 PAT（Scope 勾 `repo`）。
-凭据管理器（GCM）跑在 .NET 上不支持 SOCKS，可能报
-`ServicePointManager 不支持具有 socks5 方案的代理` —— **那是噪音不是阻塞**，git 会回退到终端提示，手输账号 + PAT 照样能推。
 
 ---
 
-## 五、目录结构：想改什么动哪个文件
+## 七、换配色
 
-```
-phantom.github.io/
-├── index.html                ← 首页        ┐
-├── archive.html              ← 学习日志    │ 都是构建产物，
-├── tags.html                 ← 标签        │ 不要直接改！
-├── about.html                ← 关于        │ 改下面的模板
-├── 404.html                  ← 404 页面    ┘
-├── feed.xml / feed.json / sitemap.xml / robots.txt   ← 也是产物
-├── manifest.webmanifest      ← PWA 清单（静态文件，可直接改）
-│
-├── posts/
-│   ├── *.md                  ← 文章源文件（你要写的东西）
-│   └── *.html                ← 文章页面（产物，别改）
-│
-├── assets/
-│   ├── css/p5r.css           ← 全部样式（分 25 节，有注释）
-│   ├── js/site.js            ← 全部交互（无框架）
-│   ├── js/config.js          ← 运行参数（建站日期、首页篇数、音效默认开关）
-│   ├── js/posts-data.js      ← 文章索引（产物，别改）
-│   ├── img/
-│   │   ├── avatar.svg        ← 首页信息卡里的徽记
-│   │   ├── og.png            ← 社交分享图 1200×630
-│   │   └── icon-192/512.png  ← PWA 图标
-│   ├── fonts/anton-*.woff2   ← 标题字体（18KB）
-│   ├── vendor/               ← marked + highlight.js 的本地副本
-│   └── vendor/langs/         ← 额外代码语言（http / nginx / dockerfile / apache / powershell）
-│
-├── favicon.svg               ← 网站图标
-│
-└── tools/                    ← 构建工具，手改的就是这几个
-    ├── blog.js               ← 生成器（构建 / 新建 / 预览 / 列表）
-    ├── check.js              ← 构建后自检
-    ├── make-images.py        ← 可选：重新生成分享图和图标（需要 Pillow）
-    ├── shell.tpl.html        ← 公共外壳（导航、页脚、命令面板、设置面板、遮罩、脚本）
-    ├── post.tpl.html         ← 文章页骨架
-    └── pages/                ← 各页面的内容片段
-        ├── index.html        ← 首页内容
-        ├── archive.html      ← 学习日志页内容
-        ├── tags.html         ← 标签页内容
-        ├── about.html        ← 关于页内容
-        └── 404.html          ← 404 页内容
-```
-
-### 改东西的正确姿势
-
-| 想改什么 | 改哪里 | 改完要做什么 |
-| --- | --- | --- |
-| 页面的文字内容 | `tools/pages/对应页面.html` | `node tools/blog.js` |
-| 导航栏 / 页脚 / 站名 | `tools/shell.tpl.html` | `node tools/blog.js` |
-| 文章页标题区、上下篇 | `tools/post.tpl.html` | `node tools/blog.js` |
-| 配色、字号、动效 | `assets/css/p5r.css` | 刷新即可 |
-| 交互行为 | `assets/js/site.js` | 刷新即可 |
-| 建站日期 / 首页篇数 | `assets/js/config.js` | 刷新即可 |
-| 文章 | `posts/*.md` | `node tools/blog.js` |
-| 网站图标 | `favicon.svg` | 刷新即可 |
-| 分享图 / PWA 图标 | `tools/make-images.py` 再跑一次 | `python tools/make-images.py` |
-| 站点域名（换域名时才要） | `tools/blog.js` 顶部的 `SITE.url` | `node tools/blog.js` |
-
----
-
-## 六、换配色（一行改整站）
-
-`assets/css/p5r.css` 开头的 `:root` 里改主色：
+整站颜色只在 `docs/assets/css/p5r.css` 顶部的 `:root` 里定义。改 `--red` 一族，全站立刻换气质：
 
 ```css
 :root {
-  --red:     #E60012;   /* ← 主色，改成 #1565C0 就是 Persona 3 的蓝 */
-  --red-hot: #FF1E56;   /* 高亮端（悬停、渐变） */
-  --red-deep:#9E000C;   /* 暗部、背景斜块 */
-  --black:   #0B0B0D;   /* 主背景（不是纯黑，留一点呼吸） */
-  --paper:   #F1F0EC;   /* 纸白模式背景 */
+  --red:      #E60012;   /* 主色 */
+  --red-hot:  #FF1E56;   /* 悬停、渐变高亮端 */
+  --red-deep: #9E000C;   /* 暗部、背景斜块 */
 }
 ```
 
-注意：P5 的视觉冲击力来自**只用三种颜色**。改主色时只换 `--red` 那一族，不要往页面里加第四种颜色。
-
-主题色和 `:root` 里的 `--fg` / `--line` 等**不用手动改**——它们用 `light-dark()` 自动跟随主题。
+换成青蓝就是 Persona 3，换成黄色就是 Persona 4。
 
 ---
 
-## 七、用了哪些现代浏览器能力
+## 八、用了哪些现代浏览器能力
 
-每一项都有降级路径，老浏览器只是少一点动效，不会坏。
+每一项都留了降级路径，老浏览器只是少一点动效，不会坏。
 
 | 能力 | 用在哪 | 不支持时 |
 | --- | --- | --- |
-| **View Transitions**（跨文档） | 页面切换的斜向擦除 | 回退到 JS 版 `.wipe` |
-| **Speculation Rules** | 链接悬停即预取下一页 | 无影响，只是慢一点 |
-| **`<dialog>`** | 搜索命令面板，自带焦点管理 | 退化成 `open` 属性 |
-| **Popover API** | 阅读设置面板，点外面自动关 | 退化成普通固定面板 |
-| **CSS 锚点定位** | 设置面板贴住触发按钮 | 回退到 `top/right` 固定值 |
-| **滚动驱动动画** | 顶部阅读进度条、节标题斜条 | 回退到 JS 监听 `scroll` |
-| **`light-dark()`** | 一套变量描述黑 / 白纸两种主题 | 前面先写 hex 兜底 |
-| **容器查询** | 卡片网格按容器宽度自适应 | 回退到媒体查询 |
-| **`@starting-style`** | 面板 / 弹层入场 | 直接出现 |
-| **`content-visibility`** | 屏幕外卡片跳过渲染 | 无影响 |
-| **`text-wrap: balance/pretty`** | 标题断行、正文避孤字 | 无影响 |
-| **`prefers-color-scheme`** | 外观默认「跟随系统」 | 默认深色 |
-| **`prefers-contrast`** | 提高次要文字对比 | 无影响 |
+| View Transitions | 页面切换的斜向擦除 | 回退到 JS 版擦除动画 |
+| Speculation Rules | 链接悬停即预取下一页 | 无影响，只是慢一点 |
+| `<dialog>` | 搜索命令面板，自带焦点管理 | 退化成 `open` 属性 |
+| Popover API | 阅读设置面板，点外面自动关 | 退化成普通固定面板 |
+| CSS 锚点定位 | 设置面板贴住触发按钮 | 回退到固定坐标 |
+| 滚动驱动动画 | 顶部阅读进度条 | 回退到 JS 监听 `scroll` |
+| `light-dark()` | 一套变量描述深浅两种主题 | 前面先写 hex 兜底 |
+| 容器查询 | 卡片网格按容器宽度自适应 | 回退到媒体查询 |
+| `@starting-style` | 面板、弹层的入场 | 直接出现 |
+| `content-visibility` | 屏幕外卡片跳过渲染 | 无影响 |
 
 ---
 
-## 八、站点功能一览
+## 九、站点功能
 
-| 功能 | 说明 |
-| --- | --- |
-| 首页大菜单 | 悬停时红色渐变块从左侧铺满，对应 P5 主菜单 |
-| 页面转场 | 原生 View Transitions 斜向擦除（约 460ms，不阻塞加载） |
-| 命令面板 | 右上角放大镜，或按 `/`、`Ctrl+K`。模糊搜索文章 + 快捷命令（换主题、调字号、回顶部、复制链接…），支持 ↑↓ / 回车 |
-| 阅读设置 | 右上角 `Aa`：外观（跟随系统/深色/纸白）、正文字号、动效强度、界面音效 |
-| 主题 | 默认跟随系统，可强制深色或纸白；选择记在本机 |
-| 正文目录 | 右侧粘性面板，显示文章内进度百分比，滚动时高亮当前小节 |
-| 标题锚点 | 悬停标题出现 `#`，点一下复制这一节的完整链接 |
-| 阅读进度 | 文章页顶部红色进度条（滚动驱动动画，零 JS） |
-| 代码块 | 文件名标签、行数、WRAP / COPY、指定行高亮、超长自动折叠、两端渐隐提示 |
-| 表格 | 窄屏可横向滚动，两端渐隐提示 |
-| 相关阅读 | 构建期按标签交集 + 同分类算出，不足 3 篇用最新的补齐 |
-| 上下篇 | 文章底部，NEWER / OLDER 斜块按钮 |
-| 双 Feed | RSS 全文 + JSON Feed 1.1 |
-| 结构化数据 | 每页都有 JSON-LD（WebSite / BlogPosting / BreadcrumbList / WebPage） |
-| 社交分享 | og:image 是 1200×630 的 P5R 风格分享图，附 Twitter Card |
-| PWA | manifest + 图标，可"添加到主屏幕" |
-| 图片灯箱 | 正文图片点击全屏放大，Esc 关闭 |
-| 无障碍 | 跳转链接、aria-live 播报搜索结果、`:focus-visible` 焦点环、`prefers-reduced-motion` |
-| 打印样式 | 打印时自动隐藏导航/目录/按钮，代码块转浅色 |
+- **首页**：P5 主菜单布局，信息卡显示文章数、分类数、标签数、总字数、运行时间（实时计时）
+- **学习日志**：按年份分组
+- **标签页**：标签云 + 分类块 + 标签索引
+- **文章页**：右侧粘性目录（带进度百分比）、顶部阅读进度、标题锚点、相关阅读、上下篇
+- **命令面板**：`/` 或 `Ctrl+K` 唤起，模糊搜索 + 高亮命中，内置 14 条快捷命令（切主题、调字号、开关音效、回顶部、复制链接、跳页）
+- **阅读设置**：右上角 `Aa`，外观三态（跟随系统/深色/纸白）、正文字号五档、动效强度、界面音效
+- **搜索范围**：标题、分类、标签、正文全文
+- **订阅**：RSS 全文 + JSON Feed 1.1
+- **其他**：黑/白纸双模式、DS/2x 头像、PWA manifest、分享图（`docs/assets/img/og.png`）
 
 ---
 
-## 九、已知的注意点
+## 十、已知注意点
 
-- **不要手改产物**：`posts/*.html`、`assets/js/posts-data.js`、根目录 5 个 html、三个 feed / sitemap。
-- `draft: true` 的文章构建时跳过，不会出现在任何列表里。
-- 整站不依赖任何 CDN。想换字体就替换 `assets/fonts/` 里的 woff2，并同步改 `p5r.css` 顶部的 `@font-face`。
-- 换域名的话记得改 `tools/blog.js` 顶部的 `SITE.url`，然后重新构建（canonical、og:url、feed 里的绝对地址都取自它）。
-- `tools/make-images.py` 是可选的，只在你想重新生成分享图/图标时才要跑，需要 `pip install pillow`。用的是系统字体（Impact + 微软雅黑），换系统后重跑一下。
+1. **删除文件时环境有批量保护**。一次删太多会被拦，分批处理即可；工作区里的 `_trash/` 就是为此准备的临时存放处，已在 `.gitignore` 里忽略。
+2. **`docs/` 里的一切都会被覆盖**。手改产物的话，下次构建就没了。
+3. **`assets/` 里的第三方库是本地副本**（`marked.min.js`、`highlight.min.js`）。之所以不引 CDN，是因为 GitHub Pages 在国内访问 `cdn.jsdelivr.net` 时好时坏。整站零外部请求。
+4. **首屏主题由一段内联脚本决定**，写在 `src/templates/shell.tpl.html` 的 `<head>` 里。改主题默认值时要注意别引入闪烁。
 
 ---
 
-## 十、许可
+## 十一、许可
 
-页面代码随便用。文章内容版权归作者所有，转载注明出处。
+站点内容和文章归作者所有。代码部分随便取用。

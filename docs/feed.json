@@ -1,0 +1,112 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "PHANTOM 怪盗日志",
+  "home_page_url": "https://phantom726.github.io/",
+  "feed_url": "https://phantom726.github.io/feed.json",
+  "description": "CTF / 渗透测试 / 靶场搭建 / 逆向 技术笔记",
+  "language": "zh-CN",
+  "authors": [
+    {
+      "name": "Phantom",
+      "url": "https://github.com/phantom726"
+    }
+  ],
+  "items": [
+    {
+      "id": "https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html",
+      "url": "https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html",
+      "title": "斜切、撕纸边、原生转场：几个能复用的 CSS 效果",
+      "summary": "从《Persona 5 Royal》的界面里拆出来的几个效果——斜切容器、clip-path 撕纸边、多层色块转场。都是纯 CSS，抄走就能用在别的项目上。",
+      "content_html": "",
+      "date_published": "2026-09-22T00:00:00+08:00",
+      "date_modified": "2026-09-22T00:00:00+08:00",
+      "tags": [
+        "前端",
+        "CSS",
+        "动效",
+        "渐进增强"
+      ],
+      "language": "zh-CN"
+    },
+    {
+      "id": "https://phantom726.github.io/posts/2026-09-21-jwt-privesc-chain.html",
+      "url": "https://phantom726.github.io/posts/2026-09-21-jwt-privesc-chain.html",
+      "title": "JWT 提权：拿到普通账号之后怎么往上走",
+      "summary": "手里有个普通账号，但 flag 在管理员接口后面。这时候 JWT 通常是最短的那条路，而且攻击顺序很重要——别一上来就爆破密钥。",
+      "content_html": "",
+      "date_published": "2026-09-21T00:00:00+08:00",
+      "date_modified": "2026-09-21T00:00:00+08:00",
+      "tags": [
+        "CTF",
+        "JWT",
+        "权限绕过",
+        "Web安全"
+      ],
+      "language": "zh-CN"
+    },
+    {
+      "id": "https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html",
+      "url": "https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html",
+      "title": "sqlmap 抽不出数据时，按这个顺序排查",
+      "summary": "确认有注入但 sqlmap 跑不出东西，多数时候不是目标的问题，是请求包或参数的写法有问题。下面是我不按顺序试就会绕远路的一套流程。",
+      "content_html": "",
+      "date_published": "2026-09-20T00:00:00+08:00",
+      "date_modified": "2026-09-20T00:00:00+08:00",
+      "tags": [
+        "渗透测试",
+        "SQL注入",
+        "sqlmap",
+        "盲注"
+      ],
+      "language": "zh-CN"
+    },
+    {
+      "id": "https://phantom726.github.io/posts/2026-09-19-ctf-postmortem.html",
+      "url": "https://phantom726.github.io/posts/2026-09-19-ctf-postmortem.html",
+      "title": "打完一场比赛之后该做什么",
+      "summary": "比赛结束就关电脑，是最亏的做法。复盘不是写作文，是把「当时为什么卡住」翻译成下次能直接用的东西。",
+      "content_html": "",
+      "date_published": "2026-09-19T00:00:00+08:00",
+      "date_modified": "2026-09-22T00:00:00+08:00",
+      "tags": [
+        "CTF",
+        "CTF",
+        "复盘",
+        "方法论"
+      ],
+      "language": "zh-CN"
+    },
+    {
+      "id": "https://phantom726.github.io/posts/2026-09-17-web-recon-order.html",
+      "url": "https://phantom726.github.io/posts/2026-09-17-web-recon-order.html",
+      "title": "拿到授权目标之后，先按这个顺序收集信息",
+      "summary": "别急着丢 payload。按固定顺序把信息过一遍，后面能省掉一半返工。顺序错了，你会一直在补前面漏掉的东西。",
+      "content_html": "",
+      "date_published": "2026-09-17T00:00:00+08:00",
+      "date_modified": "2026-09-17T00:00:00+08:00",
+      "tags": [
+        "渗透测试",
+        "信息收集",
+        "nmap",
+        "流程"
+      ],
+      "language": "zh-CN"
+    },
+    {
+      "id": "https://phantom726.github.io/posts/2026-06-01-lab-setup.html",
+      "url": "https://phantom726.github.io/posts/2026-06-01-lab-setup.html",
+      "title": "靶场怎么搭：三条路，我踩过的坑",
+      "summary": "想练手的时候，卡住你的往往不是 payload 写不对，是靶场根本跑不起来。Docker、phpstudy、虚拟机这三条路我都折腾过，坑记在下面。",
+      "content_html": "",
+      "date_published": "2026-06-01T00:00:00+08:00",
+      "date_modified": "2026-06-01T00:00:00+08:00",
+      "tags": [
+        "靶场搭建",
+        "靶场",
+        "Docker",
+        "环境搭建"
+      ],
+      "language": "zh-CN"
+    }
+  ]
+}

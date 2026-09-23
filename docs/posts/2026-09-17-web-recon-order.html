@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-root="../" data-theme="dark" data-theme-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>拿到授权目标之后，先按这个顺序收集信息 | PHANTOM 怪盗日志</title>
+<meta name="description" content="别急着丢 payload。按固定顺序把信息过一遍，后面能省掉一半返工。顺序错了，你会一直在补前面漏掉的东西。">
+<meta name="author" content="Phantom">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F1F0EC" media="(prefers-color-scheme: light)">
+<link rel="canonical" href="https://phantom726.github.io/posts/2026-09-17-web-recon-order.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PHANTOM 怪盗日志">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="拿到授权目标之后，先按这个顺序收集信息 | PHANTOM 怪盗日志">
+<meta property="og:description" content="别急着丢 payload。按固定顺序把信息过一遍，后面能省掉一半返工。顺序错了，你会一直在补前面漏掉的东西。">
+<meta property="og:url" content="https://phantom726.github.io/posts/2026-09-17-web-recon-order.html">
+<meta property="og:image" content="https://phantom726.github.io/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PHANTOM 怪盗日志">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="拿到授权目标之后，先按这个顺序收集信息 | PHANTOM 怪盗日志">
+<meta name="twitter:description" content="别急着丢 payload。按固定顺序把信息过一遍，后面能省掉一半返工。顺序错了，你会一直在补前面漏掉的东西。">
+<meta name="twitter:image" content="https://phantom726.github.io/assets/img/og.png">
+<meta property="article:published_time" content="2026-09-17T00:00:00+08:00">
+<meta property="article:modified_time" content="2026-09-17T00:00:00+08:00">
+<meta property="article:section" content="渗透测试">
+<meta property="article:tag" content="信息收集">
+<meta property="article:tag" content="nmap">
+<meta property="article:tag" content="流程">
+
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/img/icon-192.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="PHANTOM 怪盗日志" href="../feed.xml">
+<link rel="alternate" type="application/feed+json" title="PHANTOM 怪盗日志" href="../feed.json">
+<link rel="preload" href="../assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/p5r.css">
+<script>
+/* 首屏状态：在样式生效前定好主题/字号/动效，避免闪一下。
+   注意：预渲染（Speculation Rules）时 storage 可能不可用，全部包在 try 里。 */
+(function(){var h=document.documentElement;try{
+  if(document.prerendering)h.classList.add('skip-loader');
+  if(sessionStorage.getItem('p5-loaded'))h.classList.add('skip-loader');
+  if(sessionStorage.getItem('p5-wipe')==='out')h.classList.add('wipe-on');
+  var t=localStorage.getItem('p5-theme')||'auto';
+  var light=window.matchMedia('(prefers-color-scheme: light)').matches;
+  h.setAttribute('data-theme', t==='auto' ? (light?'paper':'dark') : t);
+  h.setAttribute('data-theme-mode', t);
+  var fs=localStorage.getItem('p5-fs'); if(fs)h.style.setProperty('--fs-scale', fs);
+  if(localStorage.getItem('p5-motion')==='0')h.setAttribute('data-motion','off');
+}catch(e){}})();
+</script>
+<script type="speculationrules">
+{
+  "prefetch": [
+    {
+      "where": {
+        "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/*\\?*" } },
+          { "not": { "selector_matches": "a[target=_blank]" } },
+          { "not": { "selector_matches": "[rel~=nofollow]" } }
+        ]
+      },
+      "eagerness": "moderate"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://phantom726.github.io/posts/2026-09-17-web-recon-order.html#post",
+      "headline": "拿到授权目标之后，先按这个顺序收集信息",
+      "name": "拿到授权目标之后，先按这个顺序收集信息",
+      "description": "别急着丢 payload。按固定顺序把信息过一遍，后面能省掉一半返工。顺序错了，你会一直在补前面漏掉的东西。",
+      "inLanguage": "zh-CN",
+      "datePublished": "2026-09-17",
+      "dateModified": "2026-09-17",
+      "url": "https://phantom726.github.io/posts/2026-09-17-web-recon-order.html",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://phantom726.github.io/posts/2026-09-17-web-recon-order.html"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Phantom",
+        "url": "https://phantom726.github.io/"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Phantom"
+      },
+      "articleSection": "渗透测试",
+      "keywords": "信息收集, nmap, 流程",
+      "wordCount": 1161,
+      "timeRequired": "PT3M",
+      "image": "https://phantom726.github.io/assets/img/og.png"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首页",
+          "item": "https://phantom726.github.io/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "学习日志",
+          "item": "https://phantom726.github.io/archive.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "拿到授权目标之后，先按这个顺序收集信息",
+          "item": "https://phantom726.github.io/posts/2026-09-17-web-recon-order.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body data-page="post">
+
+<a class="skip" href="#main">跳到正文</a>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="nav__brand" href="../index.html">
+    <span class="nav__mark" aria-hidden="true">P</span>
+    <span class="nav__name">PHANTOM<em>怪盗日志 · TAKE YOUR HEART</em></span>
+  </a>
+  <nav class="nav__menu" id="navMenu" aria-label="主导航">
+    <a href="../index.html">首页<span>HOME</span></a>
+    <a href="../archive.html">学习日志<span>LOGBOOK</span></a>
+    <a href="../tags.html">标签<span>TAGS</span></a>
+    <a href="../about.html">关于<span>ABOUT</span></a>
+  </nav>
+  <div class="nav__side">
+    <button class="icon-btn" id="searchBtn" type="button" aria-label="搜索文章（快捷键 /）" title="搜索　／">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4.6-4.6" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn icon-btn--text" id="settingsBtn" type="button"
+            popovertarget="settings" aria-label="阅读与外观设置" title="阅读与外观">
+      <span aria-hidden="true">Aa</span>
+    </button>
+    <button class="icon-btn nav__burger" id="burger" type="button" aria-label="展开菜单" aria-expanded="false" aria-controls="navMenu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+  <!-- 文章页骨架。外壳（导航 / 页脚 / 面板 / 脚本）在 tools/shell.tpl.html -->
+  <article class="post" data-read="fresh">
+    <header class="post-hero">
+      <div class="wrap post-hero__inner">
+        <nav class="crumb" aria-label="面包屑">
+          <a href="../index.html">首页</a><i>/</i>
+          <a href="../archive.html">学习日志</a><i>/</i>
+          <span>渗透测试</span>
+        </nav>
+        <h1 class="post-title">拿到授权目标之后，先按这个顺序收集信息</h1>
+        <div class="post-meta">
+          <time datetime="2026-09-17">DATE&nbsp;<b>2026-09-17</b></time>
+          
+          <span>1161 字 · 约 3 分钟读完</span>
+          <span>FILE&nbsp;<b>2026-09-17-web-recon-order.md</b></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap post-body">
+      <div class="prose"><h2 id="第-0-步确认范围">第 0 步：确认范围<a class="h-anchor" href="#第-0-步确认范围" aria-label="复制这一节的链接" data-anchor="第-0-步确认范围"></a></h2>
+<p>这一步跳过，后面全是白干。</p>
+<p>动手之前先回答四个问题，写下来，别只在脑子里过：</p>
+<ul>
+<li>资产范围：哪些 IP、哪些域名、哪些子域算数</li>
+<li>时间窗口：允许在什么时间段测</li>
+<li>禁止动作：能不能做拒绝服务类测试，能不能跑自动化爆破</li>
+<li>联系人：出问题找谁，多久内必须报</li>
+</ul>
+<p>范围外的东西，看得见也不要碰。这不是胆小，实战里客户最在意的就是这个。</p>
+<blockquote>
+<p>下面命令里的地址都是靶场示例（<code>10.10.10.x</code> / <code>127.0.0.1</code>）。想换到真实目标上，前提是第 0 步已经确认过范围。</p>
+</blockquote>
+<h2 id="第-1-步被动收集">第 1 步：被动收集<a class="h-anchor" href="#第-1-步被动收集" aria-label="复制这一节的链接" data-anchor="第-1-步被动收集"></a></h2>
+<p>先从公开信息里把轮廓拼出来。这一步不碰目标，不会在对方日志里留下任何记录。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>目标</th>
+<th>手段</th>
+</tr>
+</thead><tbody><tr>
+<td>域名归属</td>
+<td><code>whois</code>、备案信息</td>
+</tr>
+<tr>
+<td>子域名</td>
+<td>证书透明日志（crt.sh 之类）、被动 DNS</td>
+</tr>
+<tr>
+<td>历史入口</td>
+<td>Wayback Machine 的历史快照</td>
+</tr>
+<tr>
+<td>泄露信息</td>
+<td>GitHub 搜索、公开的配置文件</td>
+</tr>
+<tr>
+<td>技术栈线索</td>
+<td>招聘信息、公开文档里提到的技术</td>
+</tr>
+</tbody></table></div>
+<p>历史快照特别值钱。已经不挂在首页上的旧接口、旧后台路径，很多还活着，而且没人维护。这是被动阶段能找到的最实用的东西。GitHub 上的密钥泄露同理，不过搜到之后先确认是不是真能用，别直接写进报告。</p>
+<h2 id="第-2-步端口扫描分三层做">第 2 步：端口扫描，分三层做<a class="h-anchor" href="#第-2-步端口扫描分三层做" aria-label="复制这一节的链接" data-anchor="第-2-步端口扫描分三层做"></a></h2>
+<p>最常见的做法是一条命令梭哈，<code>nmap -sV -sC -p- -T4</code> 一路跑到底。结果就是慢得离谱，还容易被流量设备盯上。</p>
+<p>拆成三层会快很多：</p>
+<div class="code" data-lang="BASH" data-lines="8">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">8 行</span></div>
+<pre><code class="hljs language-bash"><span class="hljs-comment"># 第一层：先看常见端口，30 秒内出结果</span>
+nmap -sS -T4 --top-ports 100 10.10.10.10
+
+<span class="hljs-comment"># 第二层：全端口，只看开不开，不做指纹</span>
+nmap -sS -p- --min-rate 2000 -n 10.10.10.10
+
+<span class="hljs-comment"># 第三层：只对已确认开放的端口做深挖</span>
+nmap -sV -sC -p 22,80,443,8080 10.10.10.10</code></pre></div>
+<p>第一层的意义是让你马上知道这是台什么机器，同时可以并行去干别的事。</p>
+<p>第二层只有一个目标：看有没有非标准端口在跑东西。很多公司的运维后台就挂在 8443、9000 这类端口上。</p>
+<p>第三层才需要 <code>-sV -sC</code>，因为服务和脚本探测很慢，不值得对着 65535 个端口跑一遍。</p>
+<p>顺便说一个不用开的选项：<code>-A</code>。它等于 <code>-sV -sC -O --traceroute</code> 全开，在真实目标上又慢又吵。知道自己在要什么，比开一堆选项有用。</p>
+<p>UDP 也别忘，<code>nmap -sU --top-ports 50 10.10.10.10</code>。SNMP（161）常常直接把整台设备的信息吐给你。</p>
+<h2 id="第-3-步服务和框架指纹">第 3 步：服务和框架指纹<a class="h-anchor" href="#第-3-步服务和框架指纹" aria-label="复制这一节的链接" data-anchor="第-3-步服务和框架指纹"></a></h2>
+<div class="code" data-lang="BASH" data-lines="2">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">2 行</span></div>
+<pre><code class="hljs language-bash">whatweb -a 3 http://10.10.10.10
+curl -sI http://10.10.10.10 | <span class="hljs-built_in">head</span> -20</code></pre></div>
+<p>重点看这几样：</p>
+<ul>
+<li><code>Server</code> 和 <code>X-Powered-By</code>，有就直接记下来，很多老系统会把版本号明明白白写在这儿</li>
+<li>特殊的 Cookie 名，能反推出框架</li>
+<li>404 页面的长相，默认错误页本身就在告诉你这是什么框架</li>
+<li>页脚、注释、<code>/robots.txt</code>、<code>/sitemap.xml</code></li>
+</ul>
+<p>这一步的价值是缩小范围。知道是 Spring Boot 之后，你要翻的漏洞类型和要看的参数位置就完全不一样了。</p>
+<h2 id="第-4-步目录和文件">第 4 步：目录和文件<a class="h-anchor" href="#第-4-步目录和文件" aria-label="复制这一节的链接" data-anchor="第-4-步目录和文件"></a></h2>
+<div class="code" data-lang="BASH" data-lines="3">
+<div class="code__bar"><span class="code__lang">BASH</span><span class="code__lines">3 行</span></div>
+<pre><code class="hljs language-bash">ffuf -u http://10.10.10.10/FUZZ \
+  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt \
+  -mc 200,301,302,403 -t 40</code></pre></div>
+<p>只匹配 200 会漏掉一半信息。403 和 401 跟 200 一样有价值，「存在但没权限」说明那里有东西，值得单独研究。</p>
+<p>先手工试几个，成本几乎为零：</p>
+<div class="code" data-lang="CODE" data-lines="5">
+<div class="code__bar"><span class="code__lang">CODE</span><span class="code__lines">5 行</span></div>
+<pre><code class="hljs">/robots.txt        /sitemap.xml
+/.git/config       /.svn/entries
+/backup.zip        /www.zip        /web.rar
+/index.php.bak     /config.php~
+/admin             /manager         /console</code></pre></div>
+<p>字典决定上限。用默认的 <code>common.txt</code> 扫一轮可以，但真正的东西往往在技术栈对应的专项字典里，比如 Struts2、Spring、WordPress 各有自己的路径表。按第 3 步的指纹去挑字典，比换一本更大的字典有效。</p>
+<p>速度也要注意。<code>-t 40</code> 在本机靶场没问题，真实目标上先调到 10 以下试水。把目标服务打崩是事故，不是成绩。</p>
+<h2 id="第-5-步接口和参数">第 5 步：接口和参数<a class="h-anchor" href="#第-5-步接口和参数" aria-label="复制这一节的链接" data-anchor="第-5-步接口和参数"></a></h2>
+<p>到这一步，前面收集的东西开始连成线：</p>
+<ol>
+<li>从 JS 里翻接口。前端打包文件里往往写着完整 API 路径和参数名，把 JS 全下来，搜 <code>/api/</code>、<code>token</code>、<code>key</code> 这类关键词</li>
+<li>从历史快照里翻旧接口，就是第 1 步存下来的那些</li>
+<li>从参数命名反推业务。<code>?id=</code>、<code>?uid=</code>、<code>?file=</code>、<code>?url=</code> 这类命名基本就在告诉你它下面是什么实现</li>
+</ol>
+<p>做完这一步，你手上应该有一张表，而不是一堆截图。</p>
+<h2 id="第-6-步整理">第 6 步：整理<a class="h-anchor" href="#第-6-步整理" aria-label="复制这一节的链接" data-anchor="第-6-步整理"></a></h2>
+<div class="code" data-lang="CODE" data-lines="10">
+<div class="code__bar"><span class="code__lang">CODE</span><span class="code__lines">10 行</span></div>
+<pre><code class="hljs">目标：10.10.10.10
+------------------------------
+端口   服务     版本              备注
+22     ssh      OpenSSH 7.4       密码登录开着
+80     http     nginx 1.18        跳到 /app
+8080   http     Tomcat 9.0.30     默认管理页可达
+------------------------------
+发现：/backup.zip 可下载（含源码）
+      /admin 返回 403
+      历史快照里有 /api/v1/user?<span class="hljs-built_in">id</span>=</code></pre></div>
+<p>信息收集是无限的，所以必须给自己设个时间盒。我的习惯是 30 到 40 分钟，到点就停下来进验证阶段。继续挖当然还能挖到东西，但边际收益掉得很快。而且很多「线索」你不去验证，永远不知道是不是真的。</p>
+<p>信息收集的价值不在「找到更多东西」，而在于让你进验证阶段之后不用瞎猜。手上有这张表，看到异常响应能立刻对上上下文；没有就只能碰运气。</p>
+</div>
+      <aside class="toc" id="toc" aria-label="文章目录"><div class="toc__bar"><span>CONTENTS</span><i id="tocPct">0%</i></div><div class="toc__track"><div class="toc__fill" id="tocFill"></div></div><ul class="toc__list"><li class="lv2"><a href="#第-0-步确认范围" data-t="第-0-步确认范围">第 0 步：确认范围</a></li><li class="lv2"><a href="#第-1-步被动收集" data-t="第-1-步被动收集">第 1 步：被动收集</a></li><li class="lv2"><a href="#第-2-步端口扫描分三层做" data-t="第-2-步端口扫描分三层做">第 2 步：端口扫描，分三层做</a></li><li class="lv2"><a href="#第-3-步服务和框架指纹" data-t="第-3-步服务和框架指纹">第 3 步：服务和框架指纹</a></li><li class="lv2"><a href="#第-4-步目录和文件" data-t="第-4-步目录和文件">第 4 步：目录和文件</a></li><li class="lv2"><a href="#第-5-步接口和参数" data-t="第-5-步接口和参数">第 5 步：接口和参数</a></li><li class="lv2"><a href="#第-6-步整理" data-t="第-6-步整理">第 6 步：整理</a></li></ul></aside>
+    </div>
+  </article>
+
+  <div class="wrap">
+    <div class="post-foot">
+      <div class="post-foot__tags"><span class="tag"><span>#信息收集</span></span><span class="tag"><span>#nmap</span></span><span class="tag"><span>#流程</span></span></div>
+      <nav class="pager" aria-label="上下篇"><a class="is-prev" href="2026-09-19-ctf-postmortem.html"><span class="pager__dir">← NEWER</span><span class="pager__t">打完一场比赛之后该做什么</span></a><a class="is-next" href="2026-06-01-lab-setup.html"><span class="pager__dir">OLDER →</span><span class="pager__t">靶场怎么搭：三条路，我踩过的坑</span></a></nav>
+    </div>
+  </div>
+
+  <section class="related"><div class="wrap"><h2 class="related__t">RELATED <i>相关阅读</i></h2><div class="related__grid"><a class="related__item" href="2026-09-20-sqlmap-blind-tuning.html"><span class="related__cat">渗透测试</span><span class="related__title">sqlmap 抽不出数据时，按这个顺序排查</span><span class="related__meta">2026.09.20 · 2 min</span></a><a class="related__item" href="2026-09-22-p5r-design-notes.html"><span class="related__cat">前端</span><span class="related__title">斜切、撕纸边、原生转场：几个能复用的 CSS 效果</span><span class="related__meta">2026.09.22 · 3 min</span></a><a class="related__item" href="2026-09-21-jwt-privesc-chain.html"><span class="related__cat">CTF</span><span class="related__title">JWT 提权：拿到普通账号之后怎么往上走</span><span class="related__meta">2026.09.21 · 2 min</span></a></div></div></section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <div class="foot__big">PHANTOM<br>THIEF LOG</div>
+    <div class="foot__links">
+      <a href="../index.html">首页</a>
+      <a href="../archive.html">学习日志</a>
+      <a href="../tags.html">标签</a>
+      <a href="../about.html">关于</a>
+      <a href="../feed.xml">RSS</a>
+      <a href="https://github.com/phantom726" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="foot__copy">
+      <span>© 2026 <b>PHANTOM</b> · TAKE YOUR HEART</span>
+      <span><a href="../sitemap.xml">SITEMAP</a> · <a href="../feed.json">JSON FEED</a></span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" type="button" aria-label="返回顶部"><span>TOP</span></button>
+
+<!-- ============ 阅读与外观（原生 Popover） ============ -->
+<div class="panel" id="settings" popover>
+  <div class="panel__hd">READING SETUP<em>阅读与外观</em></div>
+
+  <div class="panel__row">
+    <span class="panel__lb">外观</span>
+    <div class="seg" role="group" aria-label="外观模式">
+      <button type="button" data-theme-opt="auto">跟随系统</button>
+      <button type="button" data-theme-opt="dark">深色</button>
+      <button type="button" data-theme-opt="paper">纸白</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">正文字号</span>
+    <div class="seg">
+      <button type="button" data-fs="-1" aria-label="缩小字号">A−</button>
+      <button type="button" data-fs="0" aria-label="恢复默认字号">100%</button>
+      <button type="button" data-fs="1" aria-label="放大字号">A+</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">动效</span>
+    <div class="seg">
+      <button type="button" data-motion-opt="on">全开</button>
+      <button type="button" data-motion-opt="off">减少</button>
+    </div>
+  </div>
+
+  <div class="panel__row">
+    <span class="panel__lb">界面音效</span>
+    <div class="seg">
+      <button type="button" data-sfx-opt="off">关</button>
+      <button type="button" data-sfx-opt="on">开</button>
+    </div>
+  </div>
+
+  <p class="panel__tip">设置存在本机浏览器里，不会上传。按 <kbd>Esc</kbd> 关闭。</p>
+</div>
+
+<!-- ============ 命令面板（原生 dialog，自带焦点管理） ============ -->
+<dialog class="palette" id="palette" aria-label="搜索与快捷命令">
+  <div class="palette__box">
+    <div class="palette__hd">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4.6-4.6" stroke-linecap="round"/></svg>
+      <input id="paletteInput" type="text" placeholder="搜索文章，或输入命令…"
+             autocomplete="off" autocorrect="off" spellcheck="false"
+             role="combobox" aria-expanded="true" aria-controls="paletteList" aria-autocomplete="list">
+      <span class="palette__kbd">ESC</span>
+    </div>
+    <ul class="palette__list" id="paletteList" role="listbox" aria-label="结果"></ul>
+    <div class="palette__ft">
+      <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+      <span><kbd>↵</kbd> 打开</span>
+      <span><kbd>/</kbd> 唤起</span>
+      <span id="paletteCount"></span>
+    </div>
+  </div>
+</dialog>
+<p class="sr-only" id="live" aria-live="polite"></p>
+
+<!-- 转场擦除：仅在不支持原生 View Transitions 的浏览器里启用 -->
+<div class="wipe" id="wipe" aria-hidden="true">
+  <div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div><div class="wipe__p"></div>
+  <div class="wipe__stamp"><span>PHANTOM</span></div>
+</div>
+
+<div class="loader" id="loader">
+  <div class="loader__inner">
+    <div class="loader__bar"><div class="loader__fill"></div></div>
+    <div class="loader__t">NOW <i>LOADING</i></div>
+    <div class="loader__s">PHANTOM THIEF LOG</div>
+  </div>
+</div>
+<noscript><style>
+  .loader{display:none!important}
+  .reveal,.pop,.p5-menu__item,.card-hero{opacity:1!important;transform:none!important}
+  .palette,.panel{display:none!important}
+</style></noscript>
+
+<script src="../assets/js/config.js" defer></script>
+<script src="../assets/js/posts-data.js" defer></script>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

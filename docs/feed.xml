@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<channel>
+  <title>PHANTOM 怪盗日志</title>
+  <link>https://phantom726.github.io/</link>
+  <description>CTF / 渗透测试 / 靶场搭建 / 逆向 技术笔记</description>
+  <language>zh-CN</language>
+  <lastBuildDate>Wed, 23 Sep 2026 00:34:28 GMT</lastBuildDate>
+  <atom:link href="https://phantom726.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>斜切、撕纸边、原生转场：几个能复用的 CSS 效果</title>
+      <link>https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-22-p5r-design-notes.html</guid>
+      <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
+      <category>前端</category>
+      <category>CSS</category>
+      <category>动效</category>
+      <category>渐进增强</category>
+      <description>从《Persona 5 Royal》的界面里拆出来的几个效果——斜切容器、clip-path 撕纸边、多层色块转场。都是纯 CSS，抄走就能用在别的项目上。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>JWT 提权：拿到普通账号之后怎么往上走</title>
+      <link>https://phantom726.github.io/posts/2026-09-21-jwt-privesc-chain.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-21-jwt-privesc-chain.html</guid>
+      <pubDate>Mon, 21 Sep 2026 00:00:00 GMT</pubDate>
+      <category>CTF</category>
+      <category>JWT</category>
+      <category>权限绕过</category>
+      <category>Web安全</category>
+      <description>手里有个普通账号，但 flag 在管理员接口后面。这时候 JWT 通常是最短的那条路，而且攻击顺序很重要——别一上来就爆破密钥。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>sqlmap 抽不出数据时，按这个顺序排查</title>
+      <link>https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-20-sqlmap-blind-tuning.html</guid>
+      <pubDate>Sun, 20 Sep 2026 00:00:00 GMT</pubDate>
+      <category>渗透测试</category>
+      <category>SQL注入</category>
+      <category>sqlmap</category>
+      <category>盲注</category>
+      <description>确认有注入但 sqlmap 跑不出东西，多数时候不是目标的问题，是请求包或参数的写法有问题。下面是我不按顺序试就会绕远路的一套流程。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>打完一场比赛之后该做什么</title>
+      <link>https://phantom726.github.io/posts/2026-09-19-ctf-postmortem.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-19-ctf-postmortem.html</guid>
+      <pubDate>Sat, 19 Sep 2026 00:00:00 GMT</pubDate>
+      <atom:updated>2026-09-22T00:00:00.000Z</atom:updated>
+      <category>CTF</category>
+      <category>CTF</category>
+      <category>复盘</category>
+      <category>方法论</category>
+      <description>比赛结束就关电脑，是最亏的做法。复盘不是写作文，是把「当时为什么卡住」翻译成下次能直接用的东西。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>拿到授权目标之后，先按这个顺序收集信息</title>
+      <link>https://phantom726.github.io/posts/2026-09-17-web-recon-order.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-09-17-web-recon-order.html</guid>
+      <pubDate>Thu, 17 Sep 2026 00:00:00 GMT</pubDate>
+      <category>渗透测试</category>
+      <category>信息收集</category>
+      <category>nmap</category>
+      <category>流程</category>
+      <description>别急着丢 payload。按固定顺序把信息过一遍，后面能省掉一半返工。顺序错了，你会一直在补前面漏掉的东西。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    <item>
+      <title>靶场怎么搭：三条路，我踩过的坑</title>
+      <link>https://phantom726.github.io/posts/2026-06-01-lab-setup.html</link>
+      <guid isPermaLink="true">https://phantom726.github.io/posts/2026-06-01-lab-setup.html</guid>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <category>靶场搭建</category>
+      <category>靶场</category>
+      <category>Docker</category>
+      <category>环境搭建</category>
+      <description>想练手的时候，卡住你的往往不是 payload 写不对，是靶场根本跑不起来。Docker、phpstudy、虚拟机这三条路我都折腾过，坑记在下面。</description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+</channel></rss>

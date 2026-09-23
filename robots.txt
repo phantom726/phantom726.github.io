@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://phantom726.github.io/phantom.github.io/sitemap.xml
